@@ -24,19 +24,6 @@ module JSONAPI
         end
       end
 
-      # Declare the linkage data for this relationship. Useful when linkage
-      #   can be computed in a more efficient way than the data itself.
-      #
-      # @yieldreturn [Hash] The block to compute linkage data.
-      #
-      # @example
-      #   linkage_data do
-      #     { id: @post.author_id.to_s, type: 'users' }
-      #   end
-      def linkage_data(&block)
-        @_linkage_data_block = block
-      end
-
       # @overload meta(value)
       #   Declare the meta information for this relationship.
       #   @param [Hash] value The meta information hash.
