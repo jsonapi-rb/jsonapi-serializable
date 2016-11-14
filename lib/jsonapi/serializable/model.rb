@@ -24,11 +24,6 @@ module JSONAPI
       def nil?
         @model.nil?
       end
-
-      def as_jsonapi(params = {})
-        return nil if nil?
-        super(params)
-      end
     end
   end
 end

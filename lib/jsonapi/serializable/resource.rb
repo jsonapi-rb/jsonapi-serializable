@@ -34,19 +34,21 @@ module JSONAPI
       end
 
       def as_jsonapi(params = {})
-        hash = {}
-        hash[:id] = jsonapi_id
-        hash[:type] = jsonapi_type
-        requested_attrs = params[:fields] || self.class.attribute_blocks.keys
-        attr = attributes(requested_attrs)
-        hash[:attributes] = attr if attr.any?
-        requested_rels = params[:fields] || self.class.relationship_blocks.keys
-        rels = relationships(requested_rels, params[:include] || [])
-        hash[:relationships] = rels if rels.any?
-        hash[:links] = links if links.any?
-        hash[:meta] = meta unless meta.nil?
+        return nil if nil?
 
-        hash
+        {}.tap do |hash|
+          hash[:id] = jsonapi_id
+          hash[:type] = jsonapi_type
+          requested_attrs = params[:fields] || self.class.attribute_blocks.keys
+          attrs = attributes(requested_attrs)
+          hash[:attributes] = attrs if attrs.any?
+          requested_rels = params[:fields] ||
+                           self.class.relationship_blocks.keys
+          rels = relationships(requested_rels, params[:include] || [])
+          hash[:relationships] = rels if rels.any?
+          hash[:links] = links if links.any?
+          hash[:meta] = meta unless meta.nil?
+        end
       end
 
       def jsonapi_type
