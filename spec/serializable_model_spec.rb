@@ -179,7 +179,7 @@ describe JSONAPI::Serializable::Model, '#as_jsonapi' do
 
     resources = @posts.map { |p| post_klass.new(model: p) }
 
-    actual = JSONAPI.render(resources, include: 'author')
+    actual = JSONAPI.render(data: resources, include: 'author')
     expected = {
       data: [
         {
