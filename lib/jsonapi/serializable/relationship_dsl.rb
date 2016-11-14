@@ -8,12 +8,12 @@ module JSONAPI
       #               nil] The data for this relationship.
       #
       # @example
-      #   data :posts do
+      #   data do
       #     @user.posts.map { |p| PostResource.new(post: p) }
       #   end
       #
       # @example
-      #   data :author do
+      #   data do
       #     @user.author && UserResource.new(user: @user.author)
       #   end
       def data(&block)
