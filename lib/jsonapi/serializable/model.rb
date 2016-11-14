@@ -6,9 +6,7 @@ module JSONAPI
     class Model < Resource
       include ModelDSL
 
-      id { @model.public_send(:id).to_s }
-
-      def self.resource_klass_for(model_klass_name)
+      DEFAULT_RESOURCE_INFERER = lambda do |model_klass_name|
         names = model_klass_name.split('::'.freeze)
         klass_name = names.pop
         namespace = names.join('::'.freeze)
@@ -19,6 +17,13 @@ module JSONAPI
                      .join('::'.freeze)
 
         Object.const_get(klass_name)
+      end
+
+      id { @model.public_send(:id).to_s }
+
+      def initialize(param_hash = {})
+        param_hash[:_resource_inferer] ||= DEFAULT_RESOURCE_INFERER
+        super(param_hash)
       end
 
       def nil?
