@@ -58,7 +58,7 @@ class PostResource < JSONAPI::Serializable::Model
     @model.created_at
   end
 
-  relationship :author, UserResource do
+  has_one :author, UserResource do
     link(:self) do
       href @url_helper.link_for_rel('posts', @model.id, 'author')
       meta link_meta: 'some meta'
