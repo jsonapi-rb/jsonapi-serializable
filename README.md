@@ -86,7 +86,7 @@ Then, build your resources from your models and render them:
 # post = some post model
 # UrlHelper is some helper class
 resource = PostResource.new(model: post, url_helper: UrlHelper)
-document = JSONAPI.render(resource)
+document = JSONAPI.render(data: resource)
 ```
 
 ### Example for General Resources
@@ -142,7 +142,7 @@ Finally, build your resources from your models and render them:
 # post = some post model
 # UrlHelper is some helper class
 resource = PostResource.new(post: post, url_helper: UrlHelper)
-document = JSONAPI.render(resource)
+document = JSONAPI.render(data: resource)
 ```
 
 ## Documentation
