@@ -12,7 +12,7 @@ module JSONAPI
         end
 
         # TODO(beauby): Allow Hash{String=>String} as resource_class value.
-        def has_many(rel, resource_class = nil, &block)
+        def relationship(rel, resource_class = nil, &block)
           if resource_class.is_a?(String)
             resource_class = Object.const_get(resource_class)
           end
@@ -20,19 +20,11 @@ module JSONAPI
             data(resource_class) { @model.public_send(rel) }
             instance_eval(&block) unless block.nil?
           end
-          relationship(rel, &rel_block)
+          super(rel, &rel_block)
         end
-
-        def has_one(rel, resource_class = nil, &block)
-          if resource_class.is_a?(String)
-            resource_class = Object.const_get(resource_class)
-          end
-          rel_block = proc do
-            data(resource_class) { @model.public_send(rel) }
-            instance_eval(&block) unless block.nil?
-          end
-          relationship(rel, &rel_block)
-        end
+        alias has_many   relationship
+        alias has_one    relationship
+        alias belongs_to relationship
       end
     end
   end

@@ -97,6 +97,9 @@ module JSONAPI
         def relationship(name, &block)
           relationship_blocks[name] = block
         end
+        alias has_many   relationship
+        alias has_one    relationship
+        alias belongs_to relationship
 
         # Declare a link for this resource. The properties of the link are set
         #   by providing a block in which the DSL methods of
