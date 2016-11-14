@@ -17,12 +17,7 @@ module JSONAPI
             resource_class = Object.const_get(resource_class)
           end
           rel_block = proc do
-            data do
-              @model.public_send(rel).map do |related|
-                resource_class ||= @_resource_inferer.call(related.class.name)
-                resource_class.new(@_param_hash.merge(model: related))
-              end
-            end
+            data(resource_class) { @model.public_send(rel) }
             instance_eval(&block) unless block.nil?
           end
           relationship(rel, &rel_block)
@@ -33,15 +28,7 @@ module JSONAPI
             resource_class = Object.const_get(resource_class)
           end
           rel_block = proc do
-            data do
-              related = @model.public_send(rel)
-              if related.nil?
-                nil
-              else
-                resource_class ||= @_resource_inferer.call(related.class.name)
-                resource_class.new(@_param_hash.merge(model: related))
-              end
-            end
+            data(resource_class) { @model.public_send(rel) }
             instance_eval(&block) unless block.nil?
           end
           relationship(rel, &rel_block)

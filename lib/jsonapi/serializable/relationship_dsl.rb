@@ -16,10 +16,12 @@ module JSONAPI
       #   data do
       #     @user.author && UserResource.new(user: @user.author)
       #   end
-      def data(&block)
+      # TODO(beauby): Update comments to take resource_class into account.
+      def data(resource_class = nil, &block)
         if block.nil?
           @_data ||= (@_data_block && @_data_block.call)
         else
+          @_data_klass = resource_class
           @_data_block = block
         end
       end

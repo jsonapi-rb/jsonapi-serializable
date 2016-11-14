@@ -26,11 +26,20 @@ module JSONAPI
       private
 
       def linkage_data
-        linkage_data = Array(data).map do |res|
+        linkage_data = resources_for(data).map do |res|
           { type: res.jsonapi_type, id: res.jsonapi_id }
         end
 
         data.respond_to?(:each) ? linkage_data : linkage_data.first
+      end
+
+      def resources_for(data)
+        arr = Array(data)
+        return arr if arr.first.nil? || arr.first.respond_to?(:as_jsonapi)
+        arr.map do |res|
+          klass = @_data_klass || @_resource_inferer.call(res.class.name)
+          klass.new(@_param_hash.merge(model: res))
+        end
       end
     end
   end
