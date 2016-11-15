@@ -1,3 +1,5 @@
+require 'jsonapi/serializable/resource_builder'
+
 module JSONAPI
   module Serializable
     module RelationshipDSL
@@ -22,10 +24,7 @@ module JSONAPI
           # NOTE(beauby): Lazify computation since it is only needed when
           #   the corresponding relationship is included.
           @_data_block = proc do
-            data = yield
-            resources = _resources_for(resource_class, data)
-
-            data.respond_to?(:each) ? resources : resources.first
+            _resources_for(yield, resource_class)
           end
         else
           # NOTE(beauby): In the case of a computation heavy relationship with
@@ -77,17 +76,11 @@ module JSONAPI
 
       private
 
-      def _resources_for(resource_class, data)
-        arr = Array(data)
-        return arr if arr.first.nil? || arr.first.respond_to?(:as_jsonapi)
+      # @api private
+      def _resources_for(models, resource_class)
+        resource_class ||= @_resource_inferer
 
-        arr.map { |model| _resource_for(resource_class, model) }
-      end
-
-      def _resource_for(resource_class, model)
-        klass = resource_class || @_resource_inferer.call(model.class.name)
-
-        klass.new(@_param_hash.merge(model: model))
+        ResourceBuilder.build(models, @_param_hash, resource_class)
       end
     end
   end
