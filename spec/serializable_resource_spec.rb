@@ -116,6 +116,9 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
   end
 
   it 'does not include data when relationship is not included' do
+    post_klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'posts'
+    end
     user_klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       id { @user.id.to_s }
