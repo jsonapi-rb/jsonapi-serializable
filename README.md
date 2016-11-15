@@ -308,7 +308,10 @@ See `JSONAPI::Serializable::Resource` DSL.
 
 ### `JSONAPI::Serializable::Relationship` DSL
 
-+ `::data(&block)`
++ `::data(resource_class = nil, &block)`
+
+NOTE: This section is outdated. It is still valid, but the data method is now
+much more flexible.
 
 Defines the related serializable resources for the relationship.
 
@@ -321,12 +324,6 @@ data do
     SerializableUser.new(user: @post.author)
   end
 end
-```
-
-Note: It is possible to avoid this `nil` check by defining the `nil?` method on
-the `SerializableUser` class. In that case, the following is enough:
-```ruby
-data { @post.author }
 ```
 
 + `::link(key, &block)`

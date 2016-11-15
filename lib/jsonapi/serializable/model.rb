@@ -7,10 +7,6 @@ module JSONAPI
       include ModelDSL
 
       id { @model.public_send(:id).to_s }
-
-      def nil?
-        @model.nil?
-      end
     end
   end
 end
