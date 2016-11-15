@@ -3,11 +3,15 @@ require 'jsonapi/serializable/resource_builder'
 module JSONAPI
   module Serializable
     module RelationshipDSL
-      # Declare/access the data for this relationship.
-      #
-      # @yieldreturn [JSONAPI::Serializable::Resource,
-      #               Array<JSONAPI::Serializable::Resource>,
-      #               nil] The data for this relationship.
+      # Declare the data for this relationship.
+      # @param [String,Constant,Hash{Symbol=>String,Constant}] resource_class
+      # @yieldreturn The data for this relationship.
+      #   If it is nil, an object implementing the Serializable::Resource
+      #   interface, an empty array, or an array of objects implementing the
+      #   Serializable::Resource interface, then it is used as is.
+      #   Otherwise an appropriate Serializable::Model subclass is inferred
+      #   from the object(s)' namespace/class, the resource_class parameter if
+      #   provided, and the @_resource_inferer.
       #
       # @example
       #   data do
@@ -16,9 +20,24 @@ module JSONAPI
       #
       # @example
       #   data do
-      #     @user.author && UserResource.new(user: @user.author)
+      #     @post.author && UserResource.new(user: @user.author)
       #   end
-      # TODO(beauby): Update comments to take resource_class into account.
+      #
+      # @example
+      #   data do
+      #     @user.posts
+      #   end
+      # end
+      #
+      # @example
+      #   data SerializablePost do
+      #     @user.posts
+      #   end
+      #
+      # @example
+      #   data "SerializableUser" do
+      #     @post.author
+      #   end
       def data(resource_class = nil)
         if block_given?
           # NOTE(beauby): Lazify computation since it is only needed when
