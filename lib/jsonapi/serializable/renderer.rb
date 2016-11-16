@@ -1,4 +1,5 @@
 require 'jsonapi/renderer'
+require 'jsonapi/serializable/resource_builder'
 
 module JSONAPI
   module Serializable
