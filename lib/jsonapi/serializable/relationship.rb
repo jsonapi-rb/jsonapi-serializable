@@ -6,9 +6,9 @@ module JSONAPI
     class Relationship
       include RelationshipDSL
 
-      def initialize(param_hash = {}, &block)
-        param_hash.each { |k, v| instance_variable_set("@#{k}", v) }
-        @_param_hash = param_hash
+      def initialize(exposures = {}, &block)
+        exposures.each { |k, v| instance_variable_set("@#{k}", v) }
+        @_exposures = exposures
         @_links = {}
         instance_eval(&block)
       end

@@ -40,9 +40,9 @@ module JSONAPI
         klass.link_blocks = self.class.link_blocks.dup
       end
 
-      def initialize(params = {})
-        @_param_hash = params
-        params.each { |k, v| instance_variable_set("@#{k}", v) }
+      def initialize(exposures = {})
+        @_exposures = exposures
+        exposures.each { |k, v| instance_variable_set("@#{k}", v) }
       end
 
       def as_jsonapi
@@ -58,12 +58,12 @@ module JSONAPI
 
       def links
         @_links ||= self.class.link_blocks.each_with_object({}) do |(k, v), h|
-          h[k] = Link.as_jsonapi(@_param_hash, v)
+          h[k] = Link.as_jsonapi(@_exposures, v)
         end
       end
 
       def source
-        @_source ||= ErrorSource.as_jsonapi(@_param_hash,
+        @_source ||= ErrorSource.as_jsonapi(@_exposures,
                                             self.class.source_block)
       end
 

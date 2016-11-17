@@ -28,9 +28,9 @@ module JSONAPI
         klass.link_blocks = link_blocks.dup
       end
 
-      def initialize(param_hash = {})
-        @_param_hash = param_hash
-        param_hash.each { |k, v| instance_variable_set("@#{k}", v) }
+      def initialize(exposures = {})
+        @_exposures = exposures
+        exposures.each { |k, v| instance_variable_set("@#{k}", v) }
       end
 
       def as_jsonapi(params = {})
@@ -78,7 +78,7 @@ module JSONAPI
       def relationships(fields, include)
         @_relationships ||= self.class.relationship_blocks
                                 .each_with_object({}) do |(k, v), h|
-          h[k] = Relationship.new(@_param_hash, &v)
+          h[k] = Relationship.new(@_exposures, &v)
         end
         @_relationships
           .select { |k, _| fields.include?(k) }
@@ -98,7 +98,7 @@ module JSONAPI
 
       def links
         @_links ||= self.class.link_blocks.each_with_object({}) do |(k, v), h|
-          h[k] = Link.as_jsonapi(@_param_hash, &v)
+          h[k] = Link.as_jsonapi(@_exposures, &v)
         end
       end
     end

@@ -90,7 +90,7 @@ module JSONAPI
       #      meta authorization_needed: true
       #    end
       def link(name, &block)
-        @_links[name] = Link.as_jsonapi(@_param_hash, &block)
+        @_links[name] = Link.as_jsonapi(@_exposures, &block)
       end
 
       private
@@ -99,7 +99,7 @@ module JSONAPI
       def _resources_for(models, resource_class)
         resource_class ||= @_resource_inferer
 
-        ResourceBuilder.build(models, @_param_hash, resource_class)
+        ResourceBuilder.build(models, @_exposures, resource_class)
       end
     end
   end
