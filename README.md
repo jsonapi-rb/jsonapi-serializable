@@ -116,7 +116,7 @@ class PostResource < JSONAPI::Serializable::Resource
       meta link_meta: 'some meta'
     end
     link(:related) { @url_helper.link_for_res('users', @post.author.id) }
-    data do
+    resources do
       if @post.author.nil?
         nil
       else
@@ -191,7 +191,7 @@ the [`JSONAPI::Serializable::Relationship` DSL](#jsonapiserializablerelationship
 Example:
 ```ruby
 relationship :comments do
-  data do
+  resources do
     @post.comments.map do |c|
       SerializableComment.new(comment: c, url_helper: @url_helper)
     end
@@ -308,16 +308,16 @@ See `JSONAPI::Serializable::Resource` DSL.
 
 ### `JSONAPI::Serializable::Relationship` DSL
 
-+ `::data(resource_class = nil, &block)`
++ `::resources(resource_class = nil, &block)`
 
-NOTE: This section is outdated. It is still valid, but the data method is now
-much more flexible.
+NOTE: This section is outdated. It is still valid, but the resources method is
+now much more flexible.
 
 Defines the related serializable resources for the relationship.
 
 Example:
 ```ruby
-data do
+resources do
   if @post.author.nil?
     nil
   else
@@ -325,6 +325,10 @@ data do
   end
 end
 ```
+
++ `::data(&block)`
+
+Explicitly define linkage data (optional).
 
 + `::link(key, &block)`
 

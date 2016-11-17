@@ -9,28 +9,39 @@ module JSONAPI
       def initialize(exposures = {}, &block)
         exposures.each { |k, v| instance_variable_set("@#{k}", v) }
         @_exposures = exposures
-        @_links = {}
+        @_links     = {}
         instance_eval(&block)
       end
 
       def as_jsonapi(included)
-        hash = {}
-        hash[:links] = @_links if @_links.any?
-        hash[:meta] = @_meta unless @_meta.nil?
-        return hash unless included || (!@_links.any? && @_meta.nil?)
-        hash[:data] = linkage_data
+        {}.tap do |hash|
+          hash[:links] = @_links if @_links.any?
+          hash[:meta]  = @_meta  unless @_meta.nil?
+          include_linkage = included || (!@_links.any? && @_meta.nil?)
+          hash[:data] = linkage_data if include_linkage
+        end
+      end
 
-        hash
+      def related_resources
+        return @_related_resources if @_related_resources
+
+        resources = @_resources_block.call
+        @_arity = resources.respond_to?(:each) ? :many : :one
+        @_related_resources = Array(resources)
+
+        @_related_resources
       end
 
       private
 
       def linkage_data
-        linkage_data = Array(data).map do |res|
+        return @_linkage_block.call if @_linkage_block
+
+        linkage_data = related_resources.map do |res|
           { type: res.jsonapi_type, id: res.jsonapi_id }
         end
 
-        data.respond_to?(:each) ? linkage_data : linkage_data.first
+        @_arity == :many ? linkage_data : linkage_data.first
       end
     end
   end
