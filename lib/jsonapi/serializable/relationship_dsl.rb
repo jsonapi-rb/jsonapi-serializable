@@ -3,9 +3,9 @@ require 'jsonapi/serializable/resource_builder'
 module JSONAPI
   module Serializable
     module RelationshipDSL
-      # Declare the data for this relationship.
+      # Declare the related resources for this relationship.
       # @param [String,Constant,Hash{Symbol=>String,Constant}] resource_class
-      # @yieldreturn The data for this relationship.
+      # @yieldreturn The related resources for this relationship.
       #   If it is nil, an object implementing the Serializable::Resource
       #   interface, an empty array, or an array of objects implementing the
       #   Serializable::Resource interface, then it is used as is.
@@ -14,42 +14,45 @@ module JSONAPI
       #   provided, and the @_resource_inferer.
       #
       # @example
-      #   data do
+      #   resources do
       #     @user.posts.map { |p| PostResource.new(post: p) }
       #   end
       #
       # @example
-      #   data do
+      #   resources do
       #     @post.author && UserResource.new(user: @user.author)
       #   end
       #
       # @example
-      #   data do
+      #   resources do
       #     @user.posts
       #   end
       # end
       #
       # @example
-      #   data SerializablePost do
+      #   resources SerializablePost do
       #     @user.posts
       #   end
       #
       # @example
-      #   data "SerializableUser" do
+      #   resources "SerializableUser" do
       #     @post.author
       #   end
-      def data(resource_class = nil)
-        if block_given?
-          # NOTE(beauby): Lazify computation since it is only needed when
-          #   the corresponding relationship is included.
-          @_data_block = proc do
-            _resources_for(yield, resource_class)
-          end
-        else
-          # NOTE(beauby): In the case of a computation heavy relationship with
-          #   nil value, this block might be executed multiple times.
-          @_data ||= @_data_block.call
+      def resources(resource_class = nil)
+        # NOTE(beauby): Lazify computation since it is only needed when
+        #   the corresponding relationship is included.
+        @_resources_block = proc do
+          _resources_for(yield, resource_class)
         end
+      end
+
+      # Explicitly declare linkage data.
+      # @yieldreturn The resource linkage.
+      def data(&block)
+        # NOTE(beauby): Lazify computation since it is only executed when
+        #   the corresponding relationship is included (or no links and
+        #   no meta was specified).
+        @_linkage_block = block
       end
 
       # @overload meta(value)

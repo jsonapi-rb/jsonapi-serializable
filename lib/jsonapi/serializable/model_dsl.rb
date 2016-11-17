@@ -13,7 +13,7 @@ module JSONAPI
 
         def relationship(rel, resource_class = nil, &block)
           rel_block = proc do
-            data(resource_class) { @model.public_send(rel) }
+            resources(resource_class) { @model.public_send(rel) }
             instance_eval(&block) unless block.nil?
           end
           super(rel, &rel_block)

@@ -69,7 +69,7 @@ module JSONAPI
       def jsonapi_related(include)
         @_relationships
           .select { |k, _| include.include?(k) }
-          .each_with_object({}) { |(k, v), h| h[k] = Array(v.data) }
+          .each_with_object({}) { |(k, v), h| h[k] = v.related_resources }
       end
 
       private

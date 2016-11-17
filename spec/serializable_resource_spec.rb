@@ -126,7 +126,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
         link(:self) { "http://api.example.com/users/#{@user.id}/relationships/posts" }
         link(:related) { "http://api.example.com/users/#{@user.id}/posts" }
         meta(rel_meta: 'some meta')
-        data do
+        resources do
           @user.posts.map do |p|
             post_klass.new(post: p, UrlHelper: @url_helper)
           end
@@ -166,7 +166,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
         link(:self) { "http://api.example.com/users/#{@user.id}/relationships/posts" }
         link(:related) { "http://api.example.com/users/#{@user.id}/posts" }
         meta(rel_meta: 'some meta')
-        data do
+        resources do
           @user.posts.map do |p|
             post_klass.new(post: p, UrlHelper: @url_helper)
           end
