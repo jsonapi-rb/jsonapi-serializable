@@ -11,6 +11,12 @@ module JSONAPI
           super(attr, &block)
         end
 
+        def attributes(*args)
+          args.each do |attr|
+            attribute(attr)
+          end
+        end
+
         def relationship(rel, resource_class = nil, &block)
           rel_block = proc do
             resources(resource_class) { @model.public_send(rel) }
