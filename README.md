@@ -11,11 +11,8 @@ the [jsonapi-renderer](https://github.com/jsonapi-rb/renderer) gem.
 
   - [Installation](#installation)
   - [Usage](#usage)
-    - [Example for Model-based Resources](#example-for-model-based-resources)
-    - [Example for General Resources](#example-for-general-resources)
   - [Documentation](#documentation)
     - [`JSONAPI::Serializable::Resource` DSL](#jsonapiserializableresource-dsl)
-    - [`JSONAPI::Serializable::Model` DSL](#jsonapiserializablemodel-dsl)
     - [`JSONAPI::Serializable::Relationship` DSL](#jsonapiserializablerelationship-dsl)
     - [`JSONAPI::Serializable::Link` DSL](#jsonapiserializablelink-dsl)
     - [`JSONAPI::Serializable::Error` DSL](#jsonapiserializableerror-dsl)
@@ -44,12 +41,8 @@ require 'jsonapi/serializable'
 
 Then, define some resource classes:
 
-### Example for Model-based Resources
-
-For resources that are simple representations of models, the DSL is simplified:
-
 ```ruby
-class PostResource < JSONAPI::Serializable::Model
+class PostResource < JSONAPI::Serializable::Resource
   type 'posts'
 
   attribute :title
@@ -58,12 +51,12 @@ class PostResource < JSONAPI::Serializable::Model
     @model.created_at
   end
 
-  has_one :author, UserResource do
+  has_one :author, 'V2::SerializableUser' do
     link(:self) do
-      href @url_helper.link_for_rel('posts', @model.id, 'author')
+      href @url_helpers.link_for_rel('posts', @model.id, 'author')
       meta link_meta: 'some meta'
     end
-    link(:related) { @url_helper.link_for_res('users', @model.author.id) }
+    link(:related) { @url_helpers.link_for_res('users', @model.author.id) }
     meta do
       { relationship_meta: 'some meta' }
     end
@@ -76,7 +69,7 @@ class PostResource < JSONAPI::Serializable::Model
   end
 
   link(:self) do
-    @url_helper.link_for_res('posts', @model.id)
+    @url_helpers.link_for_res('posts', @model.id)
   end
 end
 ```
@@ -84,70 +77,16 @@ end
 Then, build your resources from your models and render them:
 ```ruby
 # post = some post model
-# UrlHelper is some helper class
-resource = PostResource.new(model: post, url_helper: UrlHelper)
-document = JSONAPI.render(data: resource)
-```
-
-### Example for General Resources
-
-In case your resource is not a simple representation of one of your models,
-the more general `JSONAPI::Serializable::Resource` class can be used.
-
-```ruby
-class PostResource < JSONAPI::Serializable::Resource
-  type 'posts'
-
-  id do
-    @post.id.to_s
-  end
-
-  attribute :title do
-    @post.title
-  end
-
-  attribute :date do
-    @post.date
-  end
-
-  relationship :author do
-    link(:self) do
-      href @url_helper.link_for_rel('posts', @post.id, 'author')
-      meta link_meta: 'some meta'
-    end
-    link(:related) { @url_helper.link_for_res('users', @post.author.id) }
-    resources do
-      if @post.author.nil?
-        nil
-      else
-        UserResource.new(user: @post.author, url_helper: @url_helper)
-      end
-    end
-    meta do
-      { relationship_meta: 'some meta' }
-    end
-  end
-
-  meta do
-    { resource_meta: 'some meta' }
-  end
-
-  link(:self) do
-    @url_helper.link_for_res('posts', @post.id)
-  end
-end
-```
-Finally, build your resources from your models and render them:
-```ruby
-# post = some post model
-# UrlHelper is some helper class
-resource = PostResource.new(post: post, url_helper: UrlHelper)
-document = JSONAPI.render(data: resource)
+# UrlHelpers is some helper class
+document = JSONAPI::Serializable::Renderer.render(
+  data: post,
+  expose: { url_helpers: UrlHelpers.new }
+)
 ```
 
 ## Documentation
 
-### `JSONAPI::Serializable::Resource` DSL
+### `JSONAPI::Serializable::AbstractResource` DSL
 
 + `#initialize(hash)`
 
@@ -232,25 +171,25 @@ meta do
 end
 ```
 
-### `JSONAPI::Serializable::Model` DSL
+### `JSONAPI::Serializable::Resource` DSL
 
-This class is a subclass of `JSONAPI::Serializable::Resource` with a more
+This class is a subclass of `JSONAPI::Serializable::AbstractResource` with a more
 convenient DSL tailored for resources that are direct representation of some
 business models.
 
 + `#initialize(hash)`
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 The model is expected to be provided in the hash with the key `:model`.
 
 + `::type(value = nil, &block)`
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 + `::id(&block)`
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 Defaults to:
 ```ruby
@@ -259,7 +198,7 @@ id { @model.id }
 
 + `::attribute(key, &block)`
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 Defaults to the following when no block is provided:
 ```ruby
@@ -267,6 +206,10 @@ attribute key do
   @model.public_send(key)
 end
 ```
+
++ `::attributes(*keys)`
+
+Define multiple attributes.
 
 + `::has_one(key, resource_klass = nil, &block)`
 
@@ -296,15 +239,15 @@ end
 
 + `::relationship(key, &block)`
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 + `::link(key, &block)`
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 + `::meta(value = nil, &block)`
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 ### `JSONAPI::Serializable::Relationship` DSL
 
@@ -334,13 +277,13 @@ Explicitly define linkage data (optional).
 
 Define a relationship-level link.
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 + `::meta(value = nil, &block)`
 
 Define some relationship-level meta member.
 
-See `JSONAPI::Serializable::Resource` DSL.
+See `JSONAPI::Serializable::AbstractResource` DSL.
 
 ### `JSONAPI::Serializable::Link` DSL
 
