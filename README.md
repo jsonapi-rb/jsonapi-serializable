@@ -48,15 +48,15 @@ class PostResource < JSONAPI::Serializable::Resource
   attribute :title
 
   attribute :date do
-    @model.created_at
+    @object.created_at
   end
 
   has_one :author, 'V2::SerializableUser' do
     link(:self) do
-      href @url_helpers.link_for_rel('posts', @model.id, 'author')
+      href @url_helpers.link_for_rel('posts', @object.id, 'author')
       meta link_meta: 'some meta'
     end
-    link(:related) { @url_helpers.link_for_res('users', @model.author.id) }
+    link(:related) { @url_helpers.link_for_res('users', @object.author.id) }
     meta do
       { relationship_meta: 'some meta' }
     end
@@ -69,17 +69,17 @@ class PostResource < JSONAPI::Serializable::Resource
   end
 
   link(:self) do
-    @url_helpers.link_for_res('posts', @model.id)
+    @url_helpers.link_for_res('posts', @object.id)
   end
 end
 ```
 
-Then, build your resources from your models and render them:
+Then, render your resources:
 ```ruby
-# post = some post model
-# UrlHelpers is some helper class
+# `post` is some `Post` object
+# `UrlHelpers` is some helper class
 document = JSONAPI::Serializable::Renderer.render(
-  data: post,
+  post,
   expose: { url_helpers: UrlHelpers.new }
 )
 ```
