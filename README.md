@@ -95,8 +95,8 @@ variables within all DSLs.
 
 Example:
 ```ruby
-SerializablePost.new(post: post, url_helper: url_helper)
-# => You can then use @post and @url_helper from within the DSL.
+SerializablePost.new(post: post, url_helpers: url_helpers)
+# => You can then use @post and @url_helpers from within the DSL.
 ```
 
 + `::type(value = nil, &block)`
@@ -132,11 +132,11 @@ Example:
 relationship :comments do
   resources do
     @post.comments.map do |c|
-      SerializableComment.new(comment: c, url_helper: @url_helper)
+      SerializableComment.new(comment: c, url_helpers: @url_helpers)
     end
   end
   link :self do
-    @url_helper.link_for_post_comments(post_id: @post.id)
+    @url_helpers.link_for_post_comments(post_id: @post.id)
   end
   meta do
     { count: @post.comments.count }
