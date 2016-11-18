@@ -4,12 +4,12 @@ require 'jsonapi/serializable/resource_builder'
 module JSONAPI
   module Serializable
     class Renderer
-      def self.render(resources, options)
-        new(resources, options).render
+      def self.render(objects, options)
+        new(objects, options).render
       end
 
-      def initialize(resources, options)
-        @resources  = resources
+      def initialize(objects, options)
+        @objects    = objects
         @options    = options.dup
         @klass      = @options.delete(:class)
         @namespace  = @options.delete(:namespace)
@@ -30,7 +30,7 @@ module JSONAPI
 
       def jsonapi_resources
         toplevel_inferer = @klass || @inferer
-        JSONAPI::Serializable::ResourceBuilder.build(@resources,
+        JSONAPI::Serializable::ResourceBuilder.build(@objects,
                                                      @exposures,
                                                      toplevel_inferer)
       end

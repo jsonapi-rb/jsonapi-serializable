@@ -9,7 +9,7 @@ module JSONAPI
       #   If it is nil, an object implementing the Serializable::Resource
       #   interface, an empty array, or an array of objects implementing the
       #   Serializable::Resource interface, then it is used as is.
-      #   Otherwise an appropriate Serializable::Model subclass is inferred
+      #   Otherwise an appropriate Serializable::Resource subclass is inferred
       #   from the object(s)' namespace/class, the resource_class parameter if
       #   provided, and the @_resource_inferer.
       #
@@ -99,10 +99,10 @@ module JSONAPI
       private
 
       # @api private
-      def _resources_for(models, resource_class)
+      def _resources_for(objects, resource_class)
         resource_class ||= @_resource_inferer
 
-        ResourceBuilder.build(models, @_exposures, resource_class)
+        ResourceBuilder.build(objects, @_exposures, resource_class)
       end
     end
   end

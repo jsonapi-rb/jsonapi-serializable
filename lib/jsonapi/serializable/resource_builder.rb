@@ -1,8 +1,8 @@
 module JSONAPI
   module Serializable
     class ResourceBuilder
-      DEFAULT_RESOURCE_INFERER = lambda do |model_klass_name|
-        names = model_klass_name.split('::'.freeze)
+      DEFAULT_RESOURCE_INFERER = lambda do |object_klass_name|
+        names = object_klass_name.split('::'.freeze)
         klass_name = names.pop
         namespace = names.join('::'.freeze)
 
@@ -14,20 +14,21 @@ module JSONAPI
         Object.const_get(klass_name)
       end
 
-      def self.build(models, expose, klass)
-        return models if models.nil? ||
-                         Array(models).first.respond_to?(:as_jsonapi)
+      def self.build(objects, expose, klass)
+        return objects if objects.nil? ||
+                          Array(objects).first.respond_to?(:as_jsonapi)
 
-        resources =
-          Array(models).map { |model| new(model, expose, klass).resource }
-
-        models.respond_to?(:each) ? resources : resources.first
+        if objects.respond_to?(:each)
+          objects.map { |obj| new(obj, expose, klass).resource }
+        else
+          new(objects, expose, klass).resource
+        end
       end
 
       attr_reader :resource
 
-      def initialize(model, expose, klass)
-        @model    = model
+      def initialize(object, expose, klass)
+        @object   = object
         @expose   = expose || {}
         @klass    = klass
         @resource = serializable_class.new(serializable_params)
@@ -37,18 +38,18 @@ module JSONAPI
       private
 
       def serializable_params
-        @expose.merge(model: @model)
+        @expose.merge(object: @object)
       end
 
       # rubocop:disable Metrics/MethodLength
       def serializable_class
         klass =
           if @klass.respond_to?(:call)
-            @klass.call(@model.class.name)
+            @klass.call(@object.class.name)
           elsif @klass.is_a?(Hash)
-            @klass[@model.class.name.to_sym]
+            @klass[@object.class.name.to_sym]
           elsif @klass.nil?
-            DEFAULT_RESOURCE_INFERER.call(@model.class.name)
+            DEFAULT_RESOURCE_INFERER.call(@object.class.name)
           else
             @klass
           end
