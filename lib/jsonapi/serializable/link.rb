@@ -8,11 +8,7 @@ module JSONAPI
       def initialize(exposures = {}, &block)
         exposures.each { |k, v| instance_variable_set("@#{k}", v) }
         static_value = instance_eval(&block)
-        if static_value.is_a?(Hash)
-          @_hash = static_value
-        elsif static_value.is_a?(String)
-          @_href = static_value
-        end
+        @_href = static_value if static_value.is_a?(String)
       end
 
       # @overload href(value)
