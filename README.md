@@ -1,6 +1,5 @@
 # jsonapi-serializable
-Ruby gem for building [JSON API](http://jsonapi.org) resources to be rendered by
-the [jsonapi-renderer](https://github.com/jsonapi-rb/renderer) gem.
+Ruby gem for building and rendering [JSON API](http://jsonapi.org).
 
 ## Status
 
