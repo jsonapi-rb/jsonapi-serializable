@@ -73,15 +73,15 @@ module JSONAPI
         #
         # @example
         #   relationship :posts do
-        #     data { @user.posts.map { |p| PostResource.new(post: p) } }
+        #     resources { @user.posts.map { |p| PostResource.new(post: p) } }
         #   end
         #
         # @example
         #   relationship :author do
-        #     data do
+        #     resources do
         #       @post.author && UserResource.new(user: @post.author)
         #     end
-        #     linkage_data do
+        #     data do
         #       { type: 'users', id: @post.author_id }
         #     end
         #     link(:self) do
