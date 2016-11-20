@@ -130,7 +130,7 @@ the [`JSONAPI::Serializable::Relationship` DSL](#jsonapiserializablerelationship
 Example:
 ```ruby
 relationship :comments do
-  resources do
+  data do
     @post.comments.map do |c|
       SerializableComment.new(comment: c, url_helpers: @url_helpers)
     end
@@ -251,16 +251,16 @@ See `JSONAPI::Serializable::AbstractResource` DSL.
 
 ### `JSONAPI::Serializable::Relationship` DSL
 
-+ `::resources(resource_class = nil, &block)`
++ `::data(resource_class = nil, &block)`
 
-NOTE: This section is outdated. It is still valid, but the resources method is
+NOTE: This section is outdated. It is still valid, but the data method is
 now much more flexible.
 
 Defines the related serializable resources for the relationship.
 
 Example:
 ```ruby
-resources do
+data do
   if @post.author.nil?
     nil
   else
@@ -269,7 +269,7 @@ resources do
 end
 ```
 
-+ `::data(&block)`
++ `::linkage(&block)`
 
 Explicitly define linkage data (optional).
 

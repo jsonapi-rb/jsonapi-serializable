@@ -14,31 +14,31 @@ module JSONAPI
       #   provided, and the @_resource_inferrer.
       #
       # @example
-      #   resources do
+      #   data do
       #     @user.posts.map { |p| PostResource.new(post: p) }
       #   end
       #
       # @example
-      #   resources do
+      #   data do
       #     @post.author && UserResource.new(user: @user.author)
       #   end
       #
       # @example
-      #   resources do
+      #   data do
       #     @user.posts
       #   end
       # end
       #
       # @example
-      #   resources SerializablePost do
+      #   data SerializablePost do
       #     @user.posts
       #   end
       #
       # @example
-      #   resources "SerializableUser" do
+      #   data "SerializableUser" do
       #     @post.author
       #   end
-      def resources(resource_class = nil)
+      def data(resource_class = nil)
         # NOTE(beauby): Lazify computation since it is only needed when
         #   the corresponding relationship is included.
         @_resources_block = proc do
@@ -48,7 +48,7 @@ module JSONAPI
 
       # Explicitly declare linkage data.
       # @yieldreturn The resource linkage.
-      def data(&block)
+      def linkage(&block)
         # NOTE(beauby): Lazify computation since it is only executed when
         #   the corresponding relationship is included (or no links and
         #   no meta was specified).

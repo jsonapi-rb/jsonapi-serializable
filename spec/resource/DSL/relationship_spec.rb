@@ -24,7 +24,7 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       relationship :posts do
-        resources { @object.posts.reverse }
+        data { @object.posts.reverse }
       end
     end
 
@@ -42,7 +42,7 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       relationship :posts do
-        resources do
+        data do
           @object.posts.reverse.map do |post|
             SerializablePost.new(object: post)
           end
@@ -114,7 +114,7 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       relationship :posts do
-        data do
+        linkage do
           @object.posts.map do |post|
             { id: (post.id + 1).to_s, type: 'blogs', meta: { foo: 'bar' } }
           end

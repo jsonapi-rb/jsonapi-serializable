@@ -73,10 +73,10 @@ describe JSONAPI::Serializable::ResourceDSL do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       relationship :posts do
-        resources do
+        data do
           @posts
         end
-        data do
+        linkage do
           @posts.map do |p|
             { id: p.id.to_s, type: 'posts', meta: { foo: @foo } }
           end
