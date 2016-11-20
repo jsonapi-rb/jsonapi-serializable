@@ -134,7 +134,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       relationship :posts do
-        resources { nil }
+        data { nil }
       end
     end
     resource = klass.new(object: user)
