@@ -4,13 +4,14 @@ require 'jsonapi/serializable/error_dsl'
 module JSONAPI
   module Serializable
     class ErrorSource
-      def self.as_jsonapi(params = {})
-        self.class.new(params).as_jsonapi
+      def self.as_jsonapi(params = {}, &block)
+        new(params, &block).as_jsonapi
       end
 
-      def initialize(params = {})
+      def initialize(params = {}, &block)
         params.each { |k, v| instance_variable_set("@#{k}", v) }
         @_data = {}
+        instance_eval(&block)
       end
 
       def as_jsonapi
@@ -28,16 +29,17 @@ module JSONAPI
       include ErrorDSL
 
       class << self
-        attr_accessor :id, :id_block, :status, :status_block, :code,
-                      :code_block, :title, :title_block, :detail, :detail_block,
-                      :meta, :meta_block, :source_block, :link_blocks
+        attr_accessor :id_val, :id_block, :status_val, :status_block, :code_val,
+                      :code_block, :title_val, :title_block, :detail_val,
+                      :detail_block, :meta_val, :meta_block, :source_block,
+                      :link_blocks
       end
 
       self.link_blocks = {}
 
       def self.inherited(klass)
         super
-        klass.link_blocks = self.class.link_blocks.dup
+        klass.link_blocks = link_blocks.dup
       end
 
       def initialize(exposures = {})
@@ -58,23 +60,30 @@ module JSONAPI
 
       def links
         @_links ||= self.class.link_blocks.each_with_object({}) do |(k, v), h|
-          h[k] = Link.as_jsonapi(@_exposures, v)
+          h[k] = Link.as_jsonapi(@_exposures, &v)
         end
       end
 
       def source
-        @_source ||= ErrorSource.as_jsonapi(@_exposures,
-                                            self.class.source_block)
+        return @_source if @_source
+        return if self.class.source_block.nil?
+        @_source = ErrorSource.as_jsonapi(@_exposures,
+                                          &self.class.source_block)
       end
 
       [:id, :status, :code, :title, :detail, :meta].each do |key|
         define_method(key) do
-          unless instance_variable_defined?("@#{key}")
-            value = self.class.send(key) ||
-                    instance_eval(self.class.send("#{key}_block"))
-            instance_variable_set("@#{key}", value)
+          unless instance_variable_defined?("@_#{key}")
+            block = self.class.send("#{key}_block")
+            value =
+              if block
+                instance_eval(&block)
+              else
+                self.class.send("#{key}_val")
+              end
+            instance_variable_set("@_#{key}", value)
           end
-          instance_variable_get("@#{key}")
+          instance_variable_get("@_#{key}")
         end
       end
     end
