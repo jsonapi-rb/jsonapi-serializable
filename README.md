@@ -24,7 +24,7 @@ $ gem install jsonapi-serializable
 
 ## Usage and documentation
 
-See [jsonapi-rb.org/guides](http://jsonapi-rb.org).
+See [jsonapi-rb.org/guides](http://jsonapi-rb.org/guides).
 
 ## License
 
