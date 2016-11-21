@@ -79,7 +79,7 @@ module JSONAPI
       end
 
       def _id
-        instance_eval(&self.class.id_block)
+        instance_eval(&self.class.id_block).to_s
       end
 
       def _relationships
