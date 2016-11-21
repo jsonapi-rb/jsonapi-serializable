@@ -61,7 +61,7 @@ module JSONAPI
         # @example
         #   attribute(:name) { @user.name }
         def attribute(name, &block)
-          attribute_blocks[name] = block
+          attribute_blocks[name.to_sym] = block
         end
 
         # Declare a relationship for this resource. The properties of the
@@ -95,7 +95,7 @@ module JSONAPI
         #     end
         #   end
         def relationship(name, &block)
-          relationship_blocks[name] = block
+          relationship_blocks[name.to_sym] = block
         end
         alias has_many   relationship
         alias has_one    relationship
