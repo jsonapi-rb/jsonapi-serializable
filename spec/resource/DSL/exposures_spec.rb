@@ -10,7 +10,7 @@ describe JSONAPI::Serializable::ResourceDSL do
     end
     resource = klass.new(object: user, foo: 'bar')
     actual = resource.as_jsonapi[:type]
-    expected = 'bar'
+    expected = :bar
 
     expect(actual).to eq(expected)
   end
@@ -78,7 +78,7 @@ describe JSONAPI::Serializable::ResourceDSL do
         end
         linkage do
           @posts.map do |p|
-            { id: p.id.to_s, type: 'posts', meta: { foo: @foo } }
+            { id: p.id.to_s, type: :posts, meta: { foo: @foo } }
           end
         end
         link(:self) { @foo }
@@ -90,8 +90,8 @@ describe JSONAPI::Serializable::ResourceDSL do
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [
-        { id: '1', type: 'posts', meta: { foo: 'bar' } },
-        { id: '2', type: 'posts', meta: { foo: 'bar' } }
+        { id: '1', type: :posts, meta: { foo: 'bar' } },
+        { id: '2', type: :posts, meta: { foo: 'bar' } }
       ],
       links: {
         self: 'bar'
@@ -114,7 +114,7 @@ describe JSONAPI::Serializable::ResourceDSL do
     resource = klass.new(object: user, foo: 'bar')
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
-      data: [{ type: 'posts', id: 'bar' }, { type: 'posts', id: 'bar' }]
+      data: [{ type: :posts, id: 'bar' }, { type: :posts, id: 'bar' }]
     }
 
     expect(actual).to eq(expected)
