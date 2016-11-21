@@ -13,8 +13,8 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
-      data: [{ type: 'posts', id: '1' },
-             { type: 'posts', id: '2' }]
+      data: [{ type: :posts, id: '1' },
+             { type: :posts, id: '2' }]
     }
 
     expect(actual).to eq(expected)
@@ -31,8 +31,8 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
-      data: [{ type: 'posts', id: '2' },
-             { type: 'posts', id: '1' }]
+      data: [{ type: :posts, id: '2' },
+             { type: :posts, id: '1' }]
     }
 
     expect(actual).to eq(expected)
@@ -53,8 +53,8 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
-      data: [{ type: 'posts', id: '2' },
-             { type: 'posts', id: '1' }]
+      data: [{ type: :posts, id: '2' },
+             { type: :posts, id: '1' }]
     }
 
     expect(actual).to eq(expected)
@@ -71,8 +71,8 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
-      data: [{ type: 'posts', id: '1' },
-             { type: 'posts', id: '2' }],
+      data: [{ type: :posts, id: '1' },
+             { type: :posts, id: '2' }],
       meta: { foo: 'bar' }
     }
 
@@ -96,8 +96,8 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
-      data: [{ type: 'posts', id: '1' },
-             { type: 'posts', id: '2' }],
+      data: [{ type: :posts, id: '1' },
+             { type: :posts, id: '2' }],
       links: {
         self: 'http://api.example.com/users/foo/relationships/posts',
         related: {

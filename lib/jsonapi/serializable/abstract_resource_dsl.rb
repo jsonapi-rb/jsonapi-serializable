@@ -20,7 +20,7 @@ module JSONAPI
         #   @example
         #     type { @user.admin? ? "admin" : "users" }
         def type(value = nil, &block)
-          self.type_val = value
+          self.type_val = value.to_sym unless value.nil?
           self.type_block = block
         end
 

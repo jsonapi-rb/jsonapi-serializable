@@ -75,7 +75,7 @@ module JSONAPI
       private
 
       def _type
-        self.class.type_val || instance_eval(&self.class.type_block)
+        self.class.type_val || instance_eval(&self.class.type_block).to_sym
       end
 
       def _id

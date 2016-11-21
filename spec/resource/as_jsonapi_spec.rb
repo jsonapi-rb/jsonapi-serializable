@@ -10,7 +10,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     resource = SerializableUser.new(object: user)
     actual = resource.as_jsonapi
     expected = {
-      type: 'users',
+      type: :users,
       id: 'foo',
       attributes: {
         name: 'Lucas',
@@ -18,7 +18,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       },
       relationships: {
         posts: {
-          data: [{ id: '1', type: 'posts' }, { id: '2', type: 'posts' }]
+          data: [{ id: '1', type: :posts }, { id: '2', type: :posts }]
         }
       }
     }
@@ -30,11 +30,11 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     resource = SerializableUser.new(object: user)
     actual = resource.as_jsonapi(fields: [:posts])
     expected = {
-      type: 'users',
+      type: :users,
       id: 'foo',
       relationships: {
         posts: {
-          data: [{ id: '1', type: 'posts' }, { id: '2', type: 'posts' }]
+          data: [{ id: '1', type: :posts }, { id: '2', type: :posts }]
         }
       }
     }
@@ -46,7 +46,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     resource = SerializableUser.new(object: user)
     actual = resource.as_jsonapi(fields: [:name, :address])
     expected = {
-      type: 'users',
+      type: :users,
       id: 'foo',
       attributes: {
         name: 'Lucas',
@@ -61,7 +61,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     resource = SerializableUser.new(object: user)
     actual = resource.as_jsonapi(fields: [:name])
     expected = {
-      type: 'users',
+      type: :users,
       id: 'foo',
       attributes: {
         name: 'Lucas'
@@ -85,7 +85,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi
     expected = {
-      type: 'users',
+      type: :users,
       id: 'foo',
       attributes: { name: 'Lucas' },
       relationships: {
@@ -114,7 +114,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi(include: [:posts])
     expected = {
-      type: 'users',
+      type: :users,
       id: 'foo',
       attributes: { name: 'Lucas' },
       relationships: {
@@ -122,7 +122,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
           links: {
             self: 'http://api.example.com/users/foo/relationships/posts'
           },
-          data: [{ id: '1', type: 'posts' }, { id: '2', type: 'posts' }]
+          data: [{ id: '1', type: :posts }, { id: '2', type: :posts }]
         }
       }
     }
@@ -140,7 +140,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     resource = klass.new(object: user)
     actual = resource.as_jsonapi(include: [:posts], fields: [:posts])
     expected = {
-      type: 'users',
+      type: :users,
       id: 'foo',
       relationships: {
         posts: {
