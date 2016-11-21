@@ -8,17 +8,6 @@ Ruby gem for building and rendering [JSON API](http://jsonapi.org).
 [![codecov](https://codecov.io/gh/jsonapi-rb/serializable/branch/master/graph/badge.svg)](https://codecov.io/gh/jsonapi-rb/serializable)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/jsonapi-rb/Lobby)
 
-## Table of Contents
-
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Documentation](#documentation)
-    - [`JSONAPI::Serializable::Resource` DSL](#jsonapiserializableresource-dsl)
-    - [`JSONAPI::Serializable::Relationship` DSL](#jsonapiserializablerelationship-dsl)
-    - [`JSONAPI::Serializable::Link` DSL](#jsonapiserializablelink-dsl)
-    - [`JSONAPI::Serializable::Error` DSL](#jsonapiserializableerror-dsl)
-  - [License](#license)
-
 ## Installation
 ```ruby
 # In Gemfile
