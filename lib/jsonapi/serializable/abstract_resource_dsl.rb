@@ -6,22 +6,13 @@ module JSONAPI
       end
 
       module ClassMethods
-        # @overload type(value)
-        #   Declare the JSON API type of this resource.
-        #   @param [String] value The value of the type.
+        # Declare the JSON API type of this resource.
+        # @param [String] value The value of the type.
         #
-        #   @example
-        #     type 'users'
-        #
-        # @overload type(value)
-        #   Declare the JSON API type of this resource.
-        #   @yieldreturn [String] The value of the type.
-        #
-        #   @example
-        #     type { @user.admin? ? "admin" : "users" }
-        def type(value = nil, &block)
-          self.type_val = value.to_sym unless value.nil?
-          self.type_block = block
+        # @example
+        #   type 'users'
+        def type(value)
+          self.type_val = value.to_sym
         end
 
         # Declare the JSON API id of this resource.
