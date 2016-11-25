@@ -4,17 +4,6 @@ describe JSONAPI::Serializable::ResourceDSL do
   let(:posts) { [Post.new(id: 1), Post.new(id: 2)] }
   let(:user) { User.new(id: 'foo', posts: posts) }
 
-  it 'exposes exposures in .type' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      type { @foo }
-    end
-    resource = klass.new(object: user, foo: 'bar')
-    actual = resource.as_jsonapi[:type]
-    expected = :bar
-
-    expect(actual).to eq(expected)
-  end
-
   it 'exposes exposures in .id' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'

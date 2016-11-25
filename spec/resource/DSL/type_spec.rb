@@ -19,12 +19,10 @@ describe JSONAPI::Serializable::ResourceDSL, '.type' do
     expect(resource.jsonapi_type).to eq(:foo)
   end
 
-  it 'accepts a block' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      type { 'foo' }
-    end
+  it 'defaults to :unknown' do
+    klass = Class.new(JSONAPI::Serializable::Resource)
     resource = klass.new(object: User.new)
 
-    expect(resource.jsonapi_type).to eq(:foo)
+    expect(resource.jsonapi_type).to eq(:unknown)
   end
 end

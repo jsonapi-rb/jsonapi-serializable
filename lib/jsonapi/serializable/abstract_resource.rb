@@ -8,8 +8,7 @@ module JSONAPI
       include AbstractResourceDSL
 
       class << self
-        attr_accessor :id_block,
-                      :type_val, :type_block,
+        attr_accessor :id_block, :type_val,
                       :meta_val, :meta_block,
                       :attribute_blocks,
                       :relationship_blocks,
@@ -23,7 +22,6 @@ module JSONAPI
       def self.inherited(klass)
         super
         klass.type_val            = type_val
-        klass.type_block          = type_block
         klass.id_block            = id_block
         klass.meta_val            = meta_val
         klass.meta_block          = meta_block
@@ -75,7 +73,7 @@ module JSONAPI
       private
 
       def _type
-        self.class.type_val || instance_eval(&self.class.type_block).to_sym
+        self.class.type_val || :unknown
       end
 
       def _id
