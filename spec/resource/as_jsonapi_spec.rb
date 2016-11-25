@@ -18,7 +18,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       },
       relationships: {
         posts: {
-          data: [{ id: '1', type: :posts }, { id: '2', type: :posts }]
+          meta: { loaded: false }
         }
       }
     }
@@ -34,7 +34,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       id: 'foo',
       relationships: {
         posts: {
-          data: [{ id: '1', type: :posts }, { id: '2', type: :posts }]
+          meta: { loaded: false }
         }
       }
     }
@@ -71,7 +71,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     expect(actual).to eq(expected)
   end
 
-  it 'omits linkage data for non-included relationships' do
+  it 'omits linkage data for non-included relationships with links' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       attribute :name
@@ -93,6 +93,81 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
           links: {
             self: 'http://api.example.com/users/foo/relationships/posts'
           }
+        }
+      }
+    }
+
+    expect(actual).to eq(expected)
+  end
+
+  it 'omits linkage data for non-included relationships with meta' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+      attribute :name
+      relationship :posts do
+        meta foo: 'bar'
+      end
+    end
+
+    resource = klass.new(object: user)
+    actual = resource.as_jsonapi
+    expected = {
+      type: :users,
+      id: 'foo',
+      attributes: { name: 'Lucas' },
+      relationships: {
+        posts: {
+          meta: { foo: 'bar' }
+        }
+      }
+    }
+
+    expect(actual).to eq(expected)
+  end
+
+  it 'omits linkage data for non-included relationships no links nor meta' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+      attribute :name
+      relationship :posts
+    end
+
+    resource = klass.new(object: user)
+    actual = resource.as_jsonapi
+    expected = {
+      type: :users,
+      id: 'foo',
+      attributes: { name: 'Lucas' },
+      relationships: {
+        posts: {
+          meta: { loaded: false }
+        }
+      }
+    }
+
+    expect(actual).to eq(expected)
+  end
+
+  it 'explicitly sets linkage data' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+      attribute :name
+      relationship :posts do
+        linkage do
+          @object.posts.map { |p| { id: p.id.to_s, type: 'posts' } }
+        end
+      end
+    end
+
+    resource = klass.new(object: user)
+    actual = resource.as_jsonapi
+    expected = {
+      type: :users,
+      id: 'foo',
+      attributes: { name: 'Lucas' },
+      relationships: {
+        posts: {
+          data: [{ id: '1', type: 'posts' }, { id: '2', type: 'posts' }]
         }
       }
     }
