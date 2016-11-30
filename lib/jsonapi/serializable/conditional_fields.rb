@@ -4,7 +4,7 @@ module JSONAPI
       def self.prepended(klass)
         klass.class_eval do
           extend ClassMethods
-          include InstanceMethods
+          prepend InstanceMethods
           class << klass
             attr_accessor :condition_blocks
           end
@@ -49,18 +49,14 @@ module JSONAPI
         end
 
         def requested_attributes(fields)
-          self.class.attribute_blocks
-            .select { |k, _| fields.nil? || fields.include?(k) }
-            .select { |k, _| _conditions[k].nil? || instance_exec(&_conditions[k]) }
-            .each_with_object({}) { |(k, v), h| h[k] = instance_eval(&v) }
+          super(fields).select do |k, _|
+            _conditions[k].nil? || instance_exec(&_conditions[k])
+          end
         end
 
-        def requested_relationships(fields, include)
-          @_relationships
-            .select { |k, _| fields.nil? || fields.include?(k) }
-            .select { |k, _| _conditions[k].nil? || instance_exec(&_conditions[k]) }
-            .each_with_object({}) do |(k, v), h|
-            h[k] = v.as_jsonapi(include.include?(k))
+        def requested_relationships(fields)
+          super(fields).select do |k, _|
+            _conditions[k].nil? || instance_exec(&_conditions[k])
           end
         end
       end
