@@ -5,7 +5,7 @@ module JSONAPI
         klass.class_eval do
           extend ClassMethods
           prepend InstanceMethods
-          class << klass
+          class << self
             attr_accessor :condition_blocks
           end
           self.condition_blocks ||= {}
