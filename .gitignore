@@ -9,6 +9,7 @@
 /test/tmp/
 /test/version_tmp/
 /tmp/
+/bin/
 
 ## Specific to RubyMotion:
 .dat*

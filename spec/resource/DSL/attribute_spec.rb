@@ -1,76 +1,106 @@
 require 'spec_helper'
 
 describe JSONAPI::Serializable::ResourceDSL, '.attribute' do
-  it 'defines an attribute' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
+  let(:klass) do
+    Class.new(JSONAPI::Serializable::Resource) do
       type 'foo'
-      attribute :name do
-        'foo'
-      end
     end
-    resource = klass.new(object: User.new)
-    actual = resource.as_jsonapi[:attributes]
-    expected = {
-      name: 'foo'
-    }
-
-    expect(actual).to eq(expected)
   end
 
-  it 'defines multiple attributes' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      type 'foo'
-      attribute :name do
-        'bar'
-      end
-      attribute :address do
-        'foo'
+  let(:object)   { User.new }
+  let(:resource) { klass.new(object: object) }
+
+  subject { resource.as_jsonapi[:attributes] }
+
+  context 'when supplied a block value' do
+    before do
+      klass.class_eval do
+        attribute(:name) { 'foo' }
       end
     end
-    resource = klass.new(object: User.new)
-    actual = resource.as_jsonapi[:attributes]
-    expected = {
-      name: 'bar',
-      address: 'foo'
-    }
 
-    expect(actual).to eq(expected)
+    it { is_expected.to eq(name: 'foo') }
   end
 
-  it 'forwards to @object by default' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      type 'foo'
-      attribute :name
+  context 'when defining multiple attributes' do
+    before do
+      klass.class_eval do
+        attribute(:name)    { 'foo' }
+        attribute(:address) { 'bar' }
+      end
     end
-    user = User.new(name: 'foo')
-    resource = klass.new(object: user)
-    actual = resource.as_jsonapi[:attributes]
-    expected = {
-      name: 'foo'
-    }
 
-    expect(actual).to eq(expected)
+    it { is_expected.to eq(name: 'foo', address: 'bar') }
   end
 
-  it 'handles conditional attributes' do
-    require 'jsonapi/serializable/conditional_fields'
-
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      prepend JSONAPI::Serializable::ConditionalFields
-      type 'foo'
-      attribute :name, if: -> { true } do
-        'bar'
+  context 'when no block supplied' do
+    before do
+      klass.class_eval do
+        attribute :name
       end
-      attribute :address, if: -> { false } do
-        'foo'
+      object.name = 'foo'
+    end
+
+    it 'forwards to @object' do
+      expect(subject).to eq(name: 'foo')
+    end
+  end
+
+  context 'when the attribute is conditional' do
+    let(:resource) do
+      klass.new(object: object, conditional: conditional)
+    end
+
+    before do
+      require 'jsonapi/serializable/conditional_fields'
+
+      klass.class_eval do
+        prepend JSONAPI::Serializable::ConditionalFields
       end
     end
-    resource = klass.new(object: User.new)
-    actual = resource.as_jsonapi[:attributes]
-    expected = {
-      name: 'bar'
-    }
 
-    expect(actual).to eq(expected)
+    context 'via :if' do
+      before do
+        klass.class_eval do
+          attribute :name, if: proc { @conditional } do
+            'foo'
+          end
+        end
+      end
+
+      context 'and the clause is true' do
+        let(:conditional) { true }
+
+        it { is_expected.to eq(name: 'foo') }
+      end
+
+      context 'and the clause is false' do
+        let(:conditional) { false }
+
+        it { is_expected.to be_nil }
+      end
+    end
+
+    context 'via :unless' do
+      before do
+        klass.class_eval do
+          attribute :name, unless: proc { @conditional } do
+            'foo'
+          end
+        end
+      end
+
+      context 'and the clause is true' do
+        let(:conditional) { true }
+
+        it { is_expected.to be_nil }
+      end
+
+      context 'and the clause is false' do
+        let(:conditional) { false }
+
+        it { is_expected.to eq(name: 'foo') }
+      end
+    end
   end
 end
