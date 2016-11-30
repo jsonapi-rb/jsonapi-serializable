@@ -8,11 +8,16 @@ module JSONAPI
           class << klass
             attr_accessor :condition_blocks
           end
-          self.condition_blocks = {}
+          self.condition_blocks ||= {}
         end
       end
 
       module ClassMethods
+        def inherited(klass)
+          super
+          klass.condition_blocks = condition_blocks.dup
+        end
+
         def _register_condition(name, conditions)
           condition_blocks[name.to_sym] =
             if conditions.key?(:if)
