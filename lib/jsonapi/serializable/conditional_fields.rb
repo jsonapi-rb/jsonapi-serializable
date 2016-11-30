@@ -51,14 +51,14 @@ module JSONAPI
         def requested_attributes(fields)
           self.class.attribute_blocks
             .select { |k, _| fields.nil? || fields.include?(k) }
-            .select { |k, _| _conditions[k].nil? || _conditions[k].call }
+            .select { |k, _| _conditions[k].nil? || instance_exec(&_conditions[k]) }
             .each_with_object({}) { |(k, v), h| h[k] = instance_eval(&v) }
         end
 
         def requested_relationships(fields, include)
           @_relationships
             .select { |k, _| fields.nil? || fields.include?(k) }
-            .select { |k, _| _conditions[k].nil? || _conditions[k].call }
+            .select { |k, _| _conditions[k].nil? || instance_exec(&_conditions[k]) }
             .each_with_object({}) do |(k, v), h|
             h[k] = v.as_jsonapi(include.include?(k))
           end
