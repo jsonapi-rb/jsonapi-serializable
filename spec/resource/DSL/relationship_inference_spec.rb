@@ -11,7 +11,7 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
   it 'allows specifying serializable class explicitly' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, SerializableBlog
+      relationship :posts, class: SerializableBlog
     end
     resource = klass.new(object: user)
     actual = resource.jsonapi_related([:posts])[:posts]
@@ -22,7 +22,7 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
   it 'allows specifying serializable class explicitly as a string' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, 'SerializableBlog'
+      relationship :posts, class: 'SerializableBlog'
     end
     resource = klass.new(object: user)
     actual = resource.jsonapi_related([:posts])[:posts]
@@ -33,7 +33,7 @@ describe JSONAPI::Serializable::ResourceDSL, '.relationship' do
   it 'allows specifying serializable classes explicitly as a hash' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, Post: 'SerializableBlog'
+      relationship :posts, class: { Post: 'SerializableBlog' }
     end
     resource = klass.new(object: user)
     actual = resource.jsonapi_related([:posts])[:posts]
