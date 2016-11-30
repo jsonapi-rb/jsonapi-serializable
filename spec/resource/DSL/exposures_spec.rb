@@ -98,7 +98,7 @@ describe JSONAPI::Serializable::ResourceDSL do
     end
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, post_klass
+      relationship :posts, class: post_klass
     end
     resource = klass.new(object: user, foo: 'bar')
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
