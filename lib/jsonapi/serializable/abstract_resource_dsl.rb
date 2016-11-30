@@ -51,7 +51,7 @@ module JSONAPI
         #
         # @example
         #   attribute(:name) { @user.name }
-        def attribute(name, &block)
+        def attribute(name, _options = {}, &block)
           attribute_blocks[name.to_sym] = block
         end
 
@@ -85,7 +85,7 @@ module JSONAPI
         #       { author_online: @post.author.online? }
         #     end
         #   end
-        def relationship(name, &block)
+        def relationship(name, _options = {}, &block)
           relationship_blocks[name.to_sym] = block
         end
         alias has_many   relationship

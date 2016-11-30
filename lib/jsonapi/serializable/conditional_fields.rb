@@ -27,24 +27,14 @@ module JSONAPI
             end
         end
 
-        def attribute(name, conditions = {})
-          _register_condition(name, conditions)
-          super(name)
+        def attribute(name, options = {}, &block)
+          super
+          _register_condition(name, options)
         end
 
-        def has_one(name, conditions = {})
-          _register_condition(name, conditions)
-          super(name)
-        end
-
-        def has_many(name, conditions = {})
-          _register_condition(name, conditions)
-          super(name)
-        end
-
-        def belongs_to(name, conditions = {})
-          _register_condition(name, conditions)
-          super(name)
+        def relationship(name, options = {}, &block)
+          super
+          _register_condition(name, options)
         end
       end
 
