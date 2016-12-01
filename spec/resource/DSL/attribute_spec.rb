@@ -52,10 +52,10 @@ describe JSONAPI::Serializable::Resource, '.attribute' do
     end
 
     before do
-      require 'jsonapi/serializable/conditional_fields'
+      require 'jsonapi/serializable/resource/conditional_fields'
 
       klass.class_eval do
-        prepend JSONAPI::Serializable::ConditionalFields
+        prepend JSONAPI::Serializable::Resource::ConditionalFields
       end
     end
 
@@ -105,10 +105,10 @@ describe JSONAPI::Serializable::Resource, '.attribute' do
   end
 
   it 'handles key transformations' do
-    require 'jsonapi/serializable/key_transform'
+    require 'jsonapi/serializable/resource/key_transform'
 
     klass = Class.new(JSONAPI::Serializable::Resource) do
-      prepend JSONAPI::Serializable::KeyTransform
+      prepend JSONAPI::Serializable::Resource::KeyTransform
       self.key_transform = proc { |k| k.to_s.capitalize }
       type 'foo'
       attribute :name do
