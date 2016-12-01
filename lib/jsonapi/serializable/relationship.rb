@@ -16,23 +16,21 @@ module JSONAPI
       def as_jsonapi(included)
         {}.tap do |hash|
           hash[:links] = @_links           if @_links.any?
-          hash[:data]  = linkage_data      if included || @_linkage_block
+          hash[:data]  = linkage_data      if included || @_include_linkage
           hash[:meta]  = @_meta            unless @_meta.nil?
           hash[:meta]  = { loaded: false } if hash.empty?
         end
       end
 
       def related_resources
-        return @_related_resources if @_related_resources
-
-        resources = @_resources_block.call
-        @_arity = resources.respond_to?(:each) ? :many : :one
-        @_related_resources = Array(resources)
-
-        @_related_resources
+        @_related_resources ||= Array(resources)
       end
 
       private
+
+      def resources
+        @_resources ||= @_resources_block.call
+      end
 
       def linkage_data
         return @_linkage_block.call if @_linkage_block
@@ -41,7 +39,7 @@ module JSONAPI
           { type: res.jsonapi_type, id: res.jsonapi_id }
         end
 
-        @_arity == :many ? linkage_data : linkage_data.first
+        resources.respond_to?(:each) ? linkage_data : linkage_data.first
       end
     end
   end

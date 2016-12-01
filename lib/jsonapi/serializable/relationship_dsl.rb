@@ -46,12 +46,22 @@ module JSONAPI
         end
       end
 
-      # Explicitly declare linkage data.
-      # @yieldreturn The resource linkage.
-      def linkage(&block)
-        # NOTE(beauby): Lazify computation since it is only executed when
-        #   the corresponding relationship is included (or no links and
-        #   no meta was specified).
+      # @overload linkage(options = {}, &block)
+      #   Explicitly declare linkage data.
+      #   @yieldreturn The resource linkage.
+      #
+      #   @example
+      #     linkage do
+      #       @object.posts.map { |p| { id: p.id.to_s, type: 'posts' } }
+      #     end
+      #
+      # @overload linkage(options = {})
+      #   Forces standard linkage even if relationship not included.
+      #
+      #   @example
+      #     linkage always: true
+      def linkage(always: false, &block)
+        @_include_linkage = always
         @_linkage_block = block
       end
 

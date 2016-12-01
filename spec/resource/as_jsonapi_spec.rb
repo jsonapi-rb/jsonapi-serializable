@@ -160,7 +160,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     end
 
     resource = klass.new(object: user)
-    actual = resource.as_jsonapi
+    actual = resource.as_jsonapi(include: [:posts])
     expected = {
       type: :users,
       id: 'foo',
