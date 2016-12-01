@@ -2,7 +2,7 @@ require 'jsonapi/serializable/link'
 
 module JSONAPI
   module Serializable
-    class AbstractResource
+    class Resource
       module Links
         def self.prepended(klass)
           super

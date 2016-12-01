@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::ResourceDSL, '.linkage' do
+describe JSONAPI::Serializable::Resource, '.linkage' do
   let(:posts) { [Post.new(id: 1), Post.new(id: 2)] }
   let(:user) { User.new(id: 'foo', posts: posts) }
 

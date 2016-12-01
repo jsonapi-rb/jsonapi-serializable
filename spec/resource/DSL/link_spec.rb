@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::ResourceDSL, '.link' do
+describe JSONAPI::Serializable::Resource, '.link' do
   it 'defines links' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'

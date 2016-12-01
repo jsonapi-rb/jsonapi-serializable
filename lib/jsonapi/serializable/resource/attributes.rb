@@ -1,6 +1,6 @@
 module JSONAPI
   module Serializable
-    class AbstractResource
+    class Resource
       module Attributes
         def self.prepended(klass)
           super
@@ -46,9 +46,16 @@ module JSONAPI
           # @yieldreturn [Hash, String, nil] The block to compute the value.
           #
           # @example
-          #   attribute(:name) { @user.name }
+          #   attribute(:name) { @object.name }
           def attribute(name, _options = {}, &block)
+            block ||= proc { @object.public_send(name) }
             attribute_blocks[name.to_sym] = block
+          end
+
+          def attributes(*args)
+            args.each do |attr|
+              attribute(attr)
+            end
           end
         end
       end

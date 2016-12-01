@@ -1,6 +1,6 @@
 module JSONAPI
   module Serializable
-    class AbstractResource
+    class Resource
       module Id
         def self.prepended(klass)
           super

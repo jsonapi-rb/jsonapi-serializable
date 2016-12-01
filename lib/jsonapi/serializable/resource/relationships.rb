@@ -2,7 +2,7 @@ require 'jsonapi/serializable/relationship'
 
 module JSONAPI
   module Serializable
-    class AbstractResource
+    class Resource
       module Relationships
         def self.prepended(klass)
           super
@@ -75,8 +75,12 @@ module JSONAPI
           #       { author_online: @post.author.online? }
           #     end
           #   end
-          def relationship(name, _options = {}, &block)
-            relationship_blocks[name.to_sym] = block
+          def relationship(name, options = {}, &block)
+            rel_block = proc do
+              data(options[:class]) { @object.public_send(name) }
+              instance_eval(&block) unless block.nil?
+            end
+            relationship_blocks[name.to_sym] = rel_block
           end
           alias has_many   relationship
           alias has_one    relationship

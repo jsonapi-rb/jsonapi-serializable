@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::ResourceDSL, '.meta' do
+describe JSONAPI::Serializable::Resource, '.meta' do
   it 'accepts a hash' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'foo'
