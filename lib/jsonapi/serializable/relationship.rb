@@ -18,7 +18,7 @@ module JSONAPI
           hash[:links] = @_links           if @_links.any?
           hash[:data]  = linkage_data      if included || @_include_linkage
           hash[:meta]  = @_meta            unless @_meta.nil?
-          hash[:meta]  = { loaded: false } if hash.empty?
+          hash[:meta]  = { included: false } if hash.empty?
         end
       end
 
