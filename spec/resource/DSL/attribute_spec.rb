@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::ResourceDSL, '.attribute' do
+describe JSONAPI::Serializable::Resource, '.attribute' do
   it 'defines an attribute' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'foo'

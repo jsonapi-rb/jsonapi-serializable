@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::ResourceDSL, '.type' do
+describe JSONAPI::Serializable::Resource, '.type' do
   it 'accepts a symbol' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type :foo

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::ResourceDSL, '.id' do
+describe JSONAPI::Serializable::Resource, '.id' do
   it 'accepts a block' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'foo'
