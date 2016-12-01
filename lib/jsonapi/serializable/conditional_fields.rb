@@ -23,7 +23,7 @@ module JSONAPI
             if conditions.key?(:if)
               conditions[:if]
             elsif conditions.key?(:unless)
-              proc { !conditions[:unless].call }
+              proc { !instance_exec(&conditions[:unless]) }
             end
         end
 
