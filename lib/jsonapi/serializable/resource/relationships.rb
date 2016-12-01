@@ -3,6 +3,7 @@ require 'jsonapi/serializable/relationship'
 module JSONAPI
   module Serializable
     class Resource
+      # Mixin to handle resource relationships.
       module Relationships
         def self.prepended(klass)
           super
@@ -23,6 +24,7 @@ module JSONAPI
           end
         end
 
+        # @see JSONAPI::Serializable::Resource#as_jsonapi
         def as_jsonapi(fields: nil, include: [])
           super.tap do |hash|
             rels = requested_relationships(fields)
@@ -39,6 +41,7 @@ module JSONAPI
             .select { |k, _| fields.nil? || fields.include?(k) }
         end
 
+        # DSL methods for declaring relationships.
         module DSL
           def inherited(klass)
             super

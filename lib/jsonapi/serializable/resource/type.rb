@@ -1,6 +1,7 @@
 module JSONAPI
   module Serializable
     class Resource
+      # Mixin to handle resource type.
       module Type
         def self.prepended(klass)
           super
@@ -17,12 +18,14 @@ module JSONAPI
           @_type = self.class.type_val || :unknown
         end
 
+        # @see JSONAPI::Serializable::Resource#as_jsonapi
         def as_jsonapi(*)
           super.tap do |hash|
             hash[:type] = @_type
           end
         end
 
+        # DSL methods for declaring the resource type.
         module DSL
           def inherited(klass)
             super

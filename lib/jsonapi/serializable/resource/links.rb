@@ -3,6 +3,7 @@ require 'jsonapi/serializable/link'
 module JSONAPI
   module Serializable
     class Resource
+      # Mixin for handling resource links.
       module Links
         def self.prepended(klass)
           super
@@ -22,12 +23,14 @@ module JSONAPI
           end
         end
 
+        # @see JSONAPI::Serializable::Resource#as_jsonapi
         def as_jsonapi(*)
           super.tap do |hash|
             hash[:links] = @_links if @_links.any?
           end
         end
 
+        # DSL methods for declaring resource links.
         module DSL
           def inherited(klass)
             super

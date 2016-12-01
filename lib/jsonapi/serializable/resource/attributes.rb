@@ -1,6 +1,7 @@
 module JSONAPI
   module Serializable
     class Resource
+      # Mixin to handle resource attributes.
       module Attributes
         def self.prepended(klass)
           super
@@ -18,6 +19,7 @@ module JSONAPI
           @_attributes = {}
         end
 
+        # @see JSONAPI::Serializable::Resource#as_jsonapi
         def as_jsonapi(fields: nil, include: [])
           super.tap do |hash|
             attrs =
@@ -34,6 +36,7 @@ module JSONAPI
               .select { |k, _| fields.nil? || fields.include?(k) }
         end
 
+        # DSL methods for declaring attributes.
         module DSL
           def inherited(klass)
             super
@@ -52,6 +55,12 @@ module JSONAPI
             attribute_blocks[name.to_sym] = block
           end
 
+          # Declare a list of attributes for this resource.
+          #
+          # @param [Array] *args The attributes keys.
+          #
+          # @example
+          #   attributes :title, :body, :date
           def attributes(*args)
             args.each do |attr|
               attribute(attr)

@@ -1,6 +1,7 @@
 module JSONAPI
   module Serializable
     class Resource
+      # Mixin for handling resource meta.
       module Meta
         def self.prepended(klass)
           super
@@ -21,12 +22,14 @@ module JSONAPI
                    end
         end
 
+        # @see JSONAPI::Serializable::Resource#as_jsonapi
         def as_jsonapi(*)
           super.tap do |hash|
             hash[:meta] = @_meta unless @_meta.nil?
           end
         end
 
+        # DSL methods for declaring resource meta.
         module DSL
           def inherited(klass)
             super

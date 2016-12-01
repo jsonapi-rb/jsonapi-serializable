@@ -1,6 +1,7 @@
 module JSONAPI
   module Serializable
     class Resource
+      # Mixin to handle resource id.
       module Id
         def self.prepended(klass)
           super
@@ -17,12 +18,14 @@ module JSONAPI
           @_id = instance_eval(&self.class.id_block).to_s
         end
 
+        # @see JSONAPI::Serializable::Resource#as_jsonapi
         def as_jsonapi(*)
           super.tap do |hash|
             hash[:id] = @_id
           end
         end
 
+        # DSL methods for declaring the resource id.
         module DSL
           def inherited(klass)
             super
