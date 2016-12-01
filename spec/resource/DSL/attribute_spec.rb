@@ -104,27 +104,21 @@ describe JSONAPI::Serializable::Resource, '.attribute' do
     end
   end
 
-  it 'handles key transformations' do
-    require 'jsonapi/serializable/resource/key_transform'
+  context 'when keys are transformed' do
+    let(:resource) do
+      klass.new(object: object)
+    end
 
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      prepend JSONAPI::Serializable::Resource::KeyTransform
-      self.key_transform = proc { |k| k.to_s.capitalize }
-      type 'foo'
-      attribute :name do
-        'bar'
-      end
-      attribute :address do
-        'foo'
+    before do
+      require 'jsonapi/serializable/resource/key_transform'
+
+      klass.class_eval do
+        prepend JSONAPI::Serializable::Resource::KeyTransform
+        self.key_transform = proc { |k| k.to_s.capitalize }
+        attributes :name, :address
       end
     end
-    resource = klass.new(object: User.new)
-    actual = resource.as_jsonapi[:attributes]
-    expected = {
-      Name: 'bar',
-      Address: 'foo'
-    }
 
-    expect(actual).to eq(expected)
+    it { is_expected.to eq(Name: nil, Address: nil) }
   end
 end

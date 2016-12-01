@@ -32,12 +32,17 @@ module JSONAPI
 
           # Handles automatic key transformation for attributes.
           def attribute(name, options = {}, &block)
+            block ||= proc { @object.public_send(name) }
             super(key_transform.call(name), options, &block)
           end
 
           # Handles automatic key transformation for relationships.
           def relationship(name, options = {}, &block)
-            super(key_transform.call(name), options, &block)
+            rel_block = proc do
+              data(options[:class]) { @object.public_send(name) }
+              instance_eval(&block) unless block.nil?
+            end
+            super(key_transform.call(name), options, &rel_block)
           end
         end
       end
