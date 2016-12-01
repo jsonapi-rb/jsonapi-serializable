@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'Conveniently serialize JSON API resources.'
   spec.description   = 'Powerful DSL for building resource classes - ' \
                        'efficient and flexible rendering.'
-  spec.homepage      = 'https://github.com/jsonapi-rb/serializable'
+  spec.homepage      = 'https://github.com/jsonapi-rb/jsonapi-serializable'
   spec.license       = 'MIT'
 
   spec.files         = Dir['README.md', 'lib/**/*']
