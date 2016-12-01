@@ -18,7 +18,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       },
       relationships: {
         posts: {
-          meta: { loaded: false }
+          meta: { included: false }
         }
       }
     }
@@ -34,7 +34,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       id: 'foo',
       relationships: {
         posts: {
-          meta: { loaded: false }
+          meta: { included: false }
         }
       }
     }
@@ -140,7 +140,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       attributes: { name: 'Lucas' },
       relationships: {
         posts: {
-          meta: { loaded: false }
+          meta: { included: false }
         }
       }
     }

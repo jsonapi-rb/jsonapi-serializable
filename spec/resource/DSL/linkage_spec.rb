@@ -53,7 +53,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
 
     resource = klass.new(object: user)
     actual = resource.as_jsonapi[:relationships][:posts]
-    expected = { meta: { loaded: false } }
+    expected = { meta: { included: false } }
 
     expect(actual).to eq(expected)
   end
