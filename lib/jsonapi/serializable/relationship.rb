@@ -1,10 +1,10 @@
 require 'jsonapi/serializable/link'
-require 'jsonapi/serializable/relationship_dsl'
+require 'jsonapi/serializable/relationship/dsl'
 
 module JSONAPI
   module Serializable
     class Relationship
-      include RelationshipDSL
+      include DSL
 
       def initialize(exposures = {}, &block)
         exposures.each { |k, v| instance_variable_set("@#{k}", v) }
