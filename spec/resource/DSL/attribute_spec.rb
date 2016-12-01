@@ -51,4 +51,26 @@ describe JSONAPI::Serializable::ResourceDSL, '.attribute' do
 
     expect(actual).to eq(expected)
   end
+
+  it 'handles conditional attributes' do
+    require 'jsonapi/serializable/conditional_fields'
+
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      prepend JSONAPI::Serializable::ConditionalFields
+      type 'foo'
+      attribute :name, if: -> { true } do
+        'bar'
+      end
+      attribute :address, if: -> { false } do
+        'foo'
+      end
+    end
+    resource = klass.new(object: User.new)
+    actual = resource.as_jsonapi[:attributes]
+    expected = {
+      name: 'bar'
+    }
+
+    expect(actual).to eq(expected)
+  end
 end
