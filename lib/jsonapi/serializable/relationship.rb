@@ -22,16 +22,19 @@ module JSONAPI
         end
       end
 
+      # @api private
       def related_resources
         @_related_resources ||= Array(resources)
       end
 
       private
 
+      # @api private
       def resources
         @_resources ||= @_resources_block.call
       end
 
+      # @api private
       def linkage_data
         return @_linkage_block.call if @_linkage_block
 

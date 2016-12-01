@@ -24,10 +24,12 @@ module JSONAPI
 
       private
 
+      # @api private
       def jsonapi_params
         @options
       end
 
+      # @api private
       def jsonapi_resources
         toplevel_inferrer = @klass || @inferrer
         JSONAPI::Serializable::ResourceBuilder.build(@objects,
@@ -35,6 +37,7 @@ module JSONAPI
                                                      toplevel_inferrer)
       end
 
+      # @api private
       def namespace_inferrer
         return nil unless @namespace
         proc do |klass|
@@ -61,10 +64,12 @@ module JSONAPI
 
       private
 
+      # @api private
       def jsonapi_params
         @options
       end
 
+      # @api private
       def jsonapi_errors
         @errors
       end

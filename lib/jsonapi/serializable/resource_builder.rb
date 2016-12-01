@@ -37,10 +37,12 @@ module JSONAPI
 
       private
 
+      # @api private
       def serializable_params
         @expose.merge(object: @object)
       end
 
+      # @api private
       # rubocop:disable Metrics/MethodLength
       def serializable_class
         klass =
@@ -58,6 +60,7 @@ module JSONAPI
       end
       # rubocop:enable Metrics/MethodLength
 
+      # @api private
       def reify_class(klass)
         if klass.is_a?(Class)
           klass
