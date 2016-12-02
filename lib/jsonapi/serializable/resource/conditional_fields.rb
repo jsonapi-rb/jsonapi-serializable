@@ -14,7 +14,7 @@ module JSONAPI
       module ConditionalFields
         def self.prepended(klass)
           klass.class_eval do
-            extend ClassMethods
+            extend DSL
             class << self
               attr_accessor :condition_blocks
             end
@@ -23,7 +23,7 @@ module JSONAPI
         end
 
         # DSL extensions for conditional fields.
-        module ClassMethods
+        module DSL
           def inherited(klass)
             super
             klass.condition_blocks = condition_blocks.dup

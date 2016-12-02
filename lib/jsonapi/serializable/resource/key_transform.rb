@@ -16,7 +16,7 @@ module JSONAPI
       module KeyTransform
         def self.prepended(klass)
           klass.class_eval do
-            extend ClassMethods
+            extend DSL
             class << self
               attr_accessor :key_transform
             end
@@ -24,7 +24,7 @@ module JSONAPI
         end
 
         # DSL extensions for automatic key transformations.
-        module ClassMethods
+        module DSL
           def inherited(klass)
             super
             klass.key_transform = key_transform
