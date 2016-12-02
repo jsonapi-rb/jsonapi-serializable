@@ -42,5 +42,12 @@ describe JSONAPI::Serializable::Resource do
 
     }
     it { is_expected.to eq(expected) }
+
+    context 'when inheriting' do
+      let(:subclass) { Class.new(klass) }
+      let(:resource) { subclass.new(object: object) }
+
+      it { is_expected.to eq(expected) }
+    end
   end
 end
