@@ -13,12 +13,12 @@ module JSONAPI
       #     has_many :close_friends
       #   end
       #   # => will modify the serialized keys to `UserName` and `CloseFriends`.
-      module KeyTransform
+      module KeyFormat
         def self.prepended(klass)
           klass.class_eval do
             extend DSL
             class << self
-              attr_accessor :key_transform
+              attr_accessor :key_format
             end
           end
         end
@@ -27,13 +27,13 @@ module JSONAPI
         module DSL
           def inherited(klass)
             super
-            klass.key_transform = key_transform
+            klass.key_format = key_format
           end
 
           # Handles automatic key transformation for attributes.
           def attribute(name, options = {}, &block)
             block ||= proc { @object.public_send(name) }
-            super(key_transform.call(name), options, &block)
+            super(key_format.call(name), options, &block)
           end
 
           # Handles automatic key transformation for relationships.
@@ -42,7 +42,7 @@ module JSONAPI
               data(options[:class]) { @object.public_send(name) }
               instance_eval(&block) unless block.nil?
             end
-            super(key_transform.call(name), options, &rel_block)
+            super(key_format.call(name), options, &rel_block)
           end
         end
       end
