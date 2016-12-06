@@ -15,7 +15,8 @@ module JSONAPI
         @namespace  = @options.delete(:namespace)
         @inferrer   = @options.delete(:inferrer)
         @exposures  = @options.delete(:expose) || {}
-        @exposures[:_resource_inferrer] = namespace_inferrer || @inferrer
+        @exposures[:_resource_builder] = resource_builder
+        freeze
       end
 
       def render
@@ -24,6 +25,10 @@ module JSONAPI
 
       private
 
+      def resource_builder
+        ResourceBuilder.new(namespace_inferrer || @inferrer)
+      end
+
       # @api private
       def jsonapi_params
         @options
@@ -31,10 +36,7 @@ module JSONAPI
 
       # @api private
       def jsonapi_resources
-        toplevel_inferrer = @klass || @inferrer
-        JSONAPI::Serializable::ResourceBuilder.build(@objects,
-                                                     @exposures,
-                                                     toplevel_inferrer)
+        @exposures[:_resource_builder].build(@objects, @exposures, @klass)
       end
 
       # @api private

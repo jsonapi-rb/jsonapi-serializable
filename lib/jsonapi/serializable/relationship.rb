@@ -9,6 +9,8 @@ module JSONAPI
       def initialize(exposures = {}, &block)
         exposures.each { |k, v| instance_variable_set("@#{k}", v) }
         @_exposures = exposures
+        @_exposures = { _resource_builder: ResourceBuilder.new }.merge!(@_exposures) unless @_exposures.key?(:_resource_builder)
+
         @_links     = {}
         instance_eval(&block)
       end
