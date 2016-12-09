@@ -12,21 +12,22 @@ module JSONAPI
         @objects    = objects
         @options    = options.dup
         @klass      = @options.delete(:class)
-        @namespace  = @options.delete(:namespace)
-        @inferrer   = @options.delete(:inferrer)
         @exposures  = @options.delete(:expose) || {}
-        @exposures[:_resource_builder] = resource_builder
+        namespace   = @options.delete(:namespace)
+        inferrer    = @options.delete(:inferrer)
+        @exposures[:_resource_builder] = resource_builder(inferrer, namespace)
         freeze
       end
 
       def render
-        JSONAPI.render(jsonapi_params.merge(data: jsonapi_resources)).to_json
+        resources = jsonapi_resources(@objects, @exposures, @klass)
+        JSONAPI.render(jsonapi_params.merge(data: resources)).to_json
       end
 
       private
 
-      def resource_builder
-        ResourceBuilder.new(namespace_inferrer || @inferrer)
+      def resource_builder(inferrer, namespace)
+        ResourceBuilder.new(namespace_inferrer(namespace) || inferrer)
       end
 
       # @api private
@@ -35,17 +36,17 @@ module JSONAPI
       end
 
       # @api private
-      def jsonapi_resources
-        @exposures[:_resource_builder].build(@objects, @exposures, @klass)
+      def jsonapi_resources(objects, exposures, klass)
+        @exposures[:_resource_builder].build(objects, exposures, klass)
       end
 
       # @api private
-      def namespace_inferrer
-        return nil unless @namespace
-        proc do |klass|
-          names = klass.name.split('::')
+      def namespace_inferrer(namespace)
+        return nil unless namespace
+        proc do |klass_name|
+          names = klass_name.split('::')
           klass = names.pop
-          [@namespace, names, "Serializable#{klass}"].reject(&:nil?).join('::')
+          [namespace, *names, "Serializable#{klass}"].reject(&:nil?).join('::')
         end
       end
     end
