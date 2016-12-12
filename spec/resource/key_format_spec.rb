@@ -13,17 +13,17 @@ describe JSONAPI::Serializable::Resource do
 
   subject { resource.as_jsonapi }
 
-  context 'when keys are transformed' do
+  context 'when keys are formatted' do
     let(:resource) do
       klass.new(object: object)
     end
 
     before do
-      require 'jsonapi/serializable/resource/key_transform'
+      require 'jsonapi/serializable/resource/key_format'
 
       klass.class_eval do
-        prepend JSONAPI::Serializable::Resource::KeyTransform
-        self.key_transform = proc { |k| k.to_s.capitalize }
+        prepend JSONAPI::Serializable::Resource::KeyFormat
+        self.key_format = proc { |k| k.to_s.capitalize }
         attribute :name
         attribute :address
         relationship :posts
