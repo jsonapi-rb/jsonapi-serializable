@@ -4,7 +4,7 @@ require 'jsonapi/serializable/resource_builder'
 module JSONAPI
   module Serializable
     class Renderer
-      def self.render(objects, options)
+      def self.render(objects, options = {})
         new(objects, options).render
       end
 
