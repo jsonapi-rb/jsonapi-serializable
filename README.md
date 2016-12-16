@@ -8,6 +8,12 @@ Ruby gem for building and rendering [JSON API](http://jsonapi.org) documents.
 [![codecov](https://codecov.io/gh/jsonapi-rb/jsonapi-serializable/branch/master/graph/badge.svg)](https://codecov.io/gh/jsonapi-rb/jsonapi-serializable)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/jsonapi-rb/Lobby)
 
+## Resources
+
+* Chat: [gitter](http://gitter.im/jsonapi-rb)
+* Twitter: [@jsonapirb](http://twitter.com/jsonapirb)
+* Docs: [jsonapi-rb.org](http://jsonapi-rb.org)
+
 ## Installation
 ```ruby
 # In Gemfile
