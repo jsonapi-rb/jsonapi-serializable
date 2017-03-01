@@ -42,7 +42,7 @@ module JSONAPI
           { type: res.jsonapi_type, id: res.jsonapi_id }
         end
 
-        resources.respond_to?(:each) ? linkage_data : linkage_data.first
+        resources.respond_to?(:to_ary) ? linkage_data : linkage_data.first
       end
     end
   end

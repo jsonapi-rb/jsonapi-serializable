@@ -15,22 +15,21 @@ module JSONAPI
       end
 
       def self.build(objects, expose, klass)
-        return objects if objects.nil? ||
-                          Array(objects).first.respond_to?(:as_jsonapi)
-
-        if objects.respond_to?(:each)
-          objects.map { |obj| new(obj, expose, klass).resource }
-        else
-          new(objects, expose, klass).resource
+        return nil if objects.nil?
+        unless objects.respond_to?(:to_ary)
+          return build([objects], expose, klass).first
         end
+
+        return objects if Array(objects).first.respond_to?(:as_jsonapi)
+
+        Array(objects).map { |obj| new(obj, expose, klass).resource }
       end
 
       attr_reader :resource
 
       def initialize(object, expose, klass)
-        @object   = object
-        @expose   = expose || {}
-        @klass    = klass
+        serializable_class  = serializable_class(object, klass)
+        serializable_params = serializable_params(object, expose || {})
         @resource = serializable_class.new(serializable_params)
         freeze
       end
@@ -38,22 +37,22 @@ module JSONAPI
       private
 
       # @api private
-      def serializable_params
-        @expose.merge(object: @object)
+      def serializable_params(object, exposures)
+        exposures.merge(object: object)
       end
 
       # @api private
       # rubocop:disable Metrics/MethodLength
-      def serializable_class
+      def serializable_class(object, klass)
         klass =
-          if @klass.respond_to?(:call)
-            @klass.call(@object.class.name)
-          elsif @klass.is_a?(Hash)
-            @klass[@object.class.name.to_sym]
-          elsif @klass.nil?
-            DEFAULT_RESOURCE_INFERER.call(@object.class.name)
+          if klass.respond_to?(:call)
+            klass.call(object.class.name)
+          elsif klass.is_a?(Hash)
+            klass[object.class.name.to_sym]
+          elsif klass.nil?
+            DEFAULT_RESOURCE_INFERER.call(object.class.name)
           else
-            @klass
+            klass
           end
 
         reify_class(klass)
