@@ -19,7 +19,7 @@ module JSONAPI
       end
 
       def render
-        JSONAPI.render(jsonapi_params.merge(data: jsonapi_resources)).to_json
+        JSONAPI.render(jsonapi_params.merge(data: jsonapi_resources))
       end
 
       private
@@ -59,7 +59,7 @@ module JSONAPI
       end
 
       def render
-        JSONAPI.render(jsonapi_params.merge(errors: jsonapi_errors)).to_json
+        JSONAPI.render(jsonapi_params.merge(errors: jsonapi_errors))
       end
 
       private
