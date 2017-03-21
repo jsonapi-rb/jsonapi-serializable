@@ -25,6 +25,9 @@ describe JSONAPI::Serializable::Resource do
         attribute :name
         attribute :address
         relationship :posts
+        belongs_to :author
+        has_many :comments
+        has_one :review
       end
     end
 
@@ -34,6 +37,15 @@ describe JSONAPI::Serializable::Resource do
       attributes: { Name: nil, Address: nil },
       relationships: {
         Posts: {
+          meta: { included: false }
+        },
+        Author: {
+          meta: { included: false }
+        },
+        Comments: {
+          meta: { included: false }
+        },
+        Review: {
           meta: { included: false }
         }
       }
