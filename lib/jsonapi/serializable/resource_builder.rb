@@ -18,8 +18,8 @@ module JSONAPI
         return objects if objects.nil? ||
                           Array(objects).first.respond_to?(:as_jsonapi)
 
-        if objects.respond_to?(:each)
-          objects.map { |obj| new(obj, expose, klass).resource }
+        if objects.respond_to?(:to_ary)
+          Array(objects).map { |obj| new(obj, expose, klass).resource }
         else
           new(objects, expose, klass).resource
         end
