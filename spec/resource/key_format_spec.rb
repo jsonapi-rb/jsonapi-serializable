@@ -19,8 +19,6 @@ describe JSONAPI::Serializable::Resource do
     end
 
     before do
-      require 'jsonapi/serializable/resource/key_format'
-
       klass.class_eval do
         prepend JSONAPI::Serializable::Resource::KeyFormat
         self.key_format = proc { |k| k.to_s.capitalize }

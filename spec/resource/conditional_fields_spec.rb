@@ -15,8 +15,6 @@ describe JSONAPI::Serializable::Resource do
 
   context 'when the attribute is conditional' do
     before do
-      require 'jsonapi/serializable/resource/conditional_fields'
-
       klass.class_eval do
         prepend JSONAPI::Serializable::Resource::ConditionalFields
       end
@@ -71,8 +69,6 @@ describe JSONAPI::Serializable::Resource do
 
   context 'when relationship is conditional' do
     before do
-      require 'jsonapi/serializable/resource/conditional_fields'
-
       klass.class_eval do
         prepend JSONAPI::Serializable::Resource::ConditionalFields
 
@@ -91,8 +87,6 @@ describe JSONAPI::Serializable::Resource do
 
   context 'when inheriting' do
     before do
-      require 'jsonapi/serializable/resource/conditional_fields'
-
       klass.class_eval do
         prepend JSONAPI::Serializable::Resource::ConditionalFields
 
