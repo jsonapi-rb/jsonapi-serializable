@@ -43,7 +43,7 @@ module JSONAPI
           # NOTE(beauby): Lazify computation since it is only needed when
           #   the corresponding relationship is included.
           @_resources_block = proc do
-            _resources_for(yield, resource_class)
+            @_resource_builder.build(yield, @_exposures, resource_class)
           end
         end
 
@@ -105,15 +105,6 @@ module JSONAPI
         #    end
         def link(name, &block)
           @_links[name] = Link.as_jsonapi(@_exposures, &block)
-        end
-
-        private
-
-        # @api private
-        def _resources_for(objects, resource_class)
-          resource_class ||= @_resource_inferrer
-
-          ResourceBuilder.build(objects, @_exposures, resource_class)
         end
       end
     end
