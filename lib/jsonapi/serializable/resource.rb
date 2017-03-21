@@ -5,6 +5,9 @@ require 'jsonapi/serializable/resource/links'
 require 'jsonapi/serializable/resource/attributes'
 require 'jsonapi/serializable/resource/relationships'
 
+require 'jsonapi/serializable/resource/conditional_fields'
+require 'jsonapi/serializable/resource/key_format'
+
 module JSONAPI
   module Serializable
     class Resource
