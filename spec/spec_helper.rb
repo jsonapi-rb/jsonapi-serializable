@@ -33,3 +33,14 @@ class SerializablePost < JSONAPI::Serializable::Resource
   attributes :title, :date
   relationship :author
 end
+
+module API
+  class SerializableUser < JSONAPI::Serializable::Resource
+    type :api_users
+    has_many :posts
+  end
+
+  class SerializablePost < JSONAPI::Serializable::Resource
+    type :api_posts
+  end
+end
