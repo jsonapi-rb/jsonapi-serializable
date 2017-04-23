@@ -3,6 +3,7 @@ module JSONAPI
     class ResourceBuilder
       def initialize(inferrer = nil)
         @inferrer = inferrer
+        @lookup_cache = {}
 
         freeze
       end
@@ -26,16 +27,10 @@ module JSONAPI
 
       # @api private
       def serializable_class(object, klass)
-        klass =
-          if klass.nil?
-            @inferrer.call(object.class.name)
-          elsif klass.is_a?(Hash)
-            klass[object.class.name.to_sym]
-          else
-            klass
-          end
+        klass = klass[object.class.name.to_sym] if klass.is_a?(Hash)
 
-        reify_class(klass)
+        @lookup_cache[[object.class.name, klass.to_s]] ||=
+          reify_class(klass || @inferrer.call(object.class.name))
       end
 
       # @api private
