@@ -13,9 +13,11 @@ module JSONAPI
         @options    = options.dup
         @klass      = @options.delete(:class)
         @namespace  = @options.delete(:namespace)
-        @inferrer   = @options.delete(:inferrer)
+        @inferrer   = @options.delete(:inferrer) || namespace_inferrer
         @exposures  = @options.delete(:expose) || {}
-        @exposures[:_resource_inferrer] = namespace_inferrer || @inferrer
+        @exposures[:_resource_inferrer] = @inferrer
+
+        freeze
       end
 
       def render
@@ -40,10 +42,10 @@ module JSONAPI
       # @api private
       def namespace_inferrer
         return nil unless @namespace
-        proc do |klass|
-          names = klass.name.split('::')
+        proc do |class_name|
+          names = class_name.split('::')
           klass = names.pop
-          [@namespace, names, "Serializable#{klass}"].reject(&:nil?).join('::')
+          [@namespace, *names, "Serializable#{klass}"].reject(&:nil?).join('::')
         end
       end
     end
