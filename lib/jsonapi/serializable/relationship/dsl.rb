@@ -12,7 +12,7 @@ module JSONAPI
         #   Serializable::Resource interface, then it is used as is.
         #   Otherwise an appropriate Serializable::Resource subclass is inferred
         #   from the object(s)' namespace/class, the resource_class parameter if
-        #   provided, and the @_resource_inferrer.
+        #   provided, and the @_resource_builder.
         #
         # @example
         #   data do
@@ -111,9 +111,8 @@ module JSONAPI
 
         # @api private
         def _resources_for(objects, resource_class)
-          resource_class ||= @_resource_inferrer
-
-          ResourceBuilder.build(objects, @_exposures, resource_class)
+          resource_builder = @_exposures[:_resource_builder]
+          resource_builder.build(objects, @_exposures, resource_class)
         end
       end
     end
