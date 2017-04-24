@@ -19,14 +19,15 @@ describe JSONAPI::Serializable::Resource do
     end
 
     before do
-      require 'jsonapi/serializable/resource/key_format'
-
       klass.class_eval do
         prepend JSONAPI::Serializable::Resource::KeyFormat
         self.key_format = proc { |k| k.to_s.capitalize }
         attribute :name
         attribute :address
-        relationship :posts
+        relationship :posts, class: SerializablePost
+        belongs_to :author, class: SerializableUser
+        has_many :comments
+        has_one :review
       end
     end
 
@@ -36,6 +37,15 @@ describe JSONAPI::Serializable::Resource do
       attributes: { Name: nil, Address: nil },
       relationships: {
         Posts: {
+          meta: { included: false }
+        },
+        Author: {
+          meta: { included: false }
+        },
+        Comments: {
+          meta: { included: false }
+        },
+        Review: {
           meta: { included: false }
         }
       }

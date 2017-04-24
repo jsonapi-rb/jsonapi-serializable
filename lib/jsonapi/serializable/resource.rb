@@ -5,6 +5,9 @@ require 'jsonapi/serializable/resource/links'
 require 'jsonapi/serializable/resource/attributes'
 require 'jsonapi/serializable/resource/relationships'
 
+require 'jsonapi/serializable/resource/conditional_fields'
+require 'jsonapi/serializable/resource/key_format'
+
 module JSONAPI
   module Serializable
     class Resource
@@ -19,8 +22,10 @@ module JSONAPI
       id { @object.public_send(:id).to_s }
 
       def initialize(exposures = {})
-        exposures.each { |k, v| instance_variable_set("@#{k}", v) }
-        @_exposures = exposures
+        @_exposures = {
+          _resource_builder: JSONAPI::Serializable::ResourceBuilder.new
+        }.merge(exposures)
+        @_exposures.each { |k, v| instance_variable_set("@#{k}", v) }
       end
 
       def as_jsonapi(*)

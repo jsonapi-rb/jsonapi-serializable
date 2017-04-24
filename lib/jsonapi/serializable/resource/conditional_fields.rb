@@ -50,6 +50,12 @@ module JSONAPI
             _register_condition(name, options)
           end
 
+          # NOTE(beauby): Re-aliasing those is necessary for the
+          #   overridden `#relationship` method to be called.
+          alias has_many   relationship
+          alias has_one    relationship
+          alias belongs_to relationship
+
           # @api private
           def _register_condition(name, options)
             condition_blocks[name.to_sym] =

@@ -25,11 +25,22 @@ end
 class SerializableUser < JSONAPI::Serializable::Resource
   type 'users'
   attributes :name, :address
-  relationship :posts
+  relationship :posts, class: 'SerializablePost'
 end
 
 class SerializablePost < JSONAPI::Serializable::Resource
   type 'posts'
   attributes :title, :date
-  relationship :author
+  relationship :author, class: 'SerializableUser'
+end
+
+module API
+  class SerializableUser < JSONAPI::Serializable::Resource
+    type :api_users
+    has_many :posts
+  end
+
+  class SerializablePost < JSONAPI::Serializable::Resource
+    type :api_posts
+  end
 end

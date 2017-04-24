@@ -5,14 +5,13 @@ module JSONAPI
     class Relationship
       module DSL
         # Declare the related resources for this relationship.
-        # @param [String,Constant,Hash{Symbol=>String,Constant}] resource_class
         # @yieldreturn The related resources for this relationship.
         #   If it is nil, an object implementing the Serializable::Resource
         #   interface, an empty array, or an array of objects implementing the
         #   Serializable::Resource interface, then it is used as is.
         #   Otherwise an appropriate Serializable::Resource subclass is inferred
-        #   from the object(s)' namespace/class, the resource_class parameter if
-        #   provided, and the @_resource_inferrer.
+        #   from the object(s)' namespace/class, the `class` relationship
+        #   option, and the @_resource_builder.
         #
         # @example
         #   data do
@@ -29,21 +28,11 @@ module JSONAPI
         #     @user.posts
         #   end
         # end
-        #
-        # @example
-        #   data SerializablePost do
-        #     @user.posts
-        #   end
-        #
-        # @example
-        #   data "SerializableUser" do
-        #     @post.author
-        #   end
-        def data(resource_class = nil)
+        def data
           # NOTE(beauby): Lazify computation since it is only needed when
           #   the corresponding relationship is included.
           @_resources_block = proc do
-            _resources_for(yield, resource_class)
+            @_resource_builder.build(yield, @_exposures, @_options[:class])
           end
         end
 
@@ -105,15 +94,6 @@ module JSONAPI
         #    end
         def link(name, &block)
           @_links[name] = Link.as_jsonapi(@_exposures, &block)
-        end
-
-        private
-
-        # @api private
-        def _resources_for(objects, resource_class)
-          resource_class ||= @_resource_inferrer
-
-          ResourceBuilder.build(objects, @_exposures, resource_class)
         end
       end
     end

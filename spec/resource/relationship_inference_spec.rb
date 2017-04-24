@@ -41,24 +41,14 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
     expect(actual.first.class).to eq(SerializableBlog)
   end
 
-  it 'uses default inferrer by default' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      type 'users'
-      relationship :posts
-    end
-    resource = klass.new(object: user)
-    actual = resource.jsonapi_related([:posts])[:posts]
-
-    expect(actual.first.class).to eq(SerializablePost)
-  end
-
   it 'uses custom inferrer if available' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       relationship :posts
     end
     inferrer = proc { |_resource_class_name| SerializableBlog }
-    resource = klass.new(object: user, _resource_inferrer: inferrer)
+    resource_builder = JSONAPI::Serializable::ResourceBuilder.new(inferrer)
+    resource = klass.new(object: user, _resource_builder: resource_builder)
     actual = resource.jsonapi_related([:posts])[:posts]
 
     expect(actual.first.class).to eq(SerializableBlog)
