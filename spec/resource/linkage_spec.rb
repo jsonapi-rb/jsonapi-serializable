@@ -7,7 +7,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
   it 'defaults to forcing standard linkage' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         linkage always: true
       end
     end
@@ -25,7 +25,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
   it 'overrides standard linkage' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         linkage do
           [{ type: :posts, id: '5' }]
         end
@@ -44,7 +44,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
   it 'does not include overriden linkage unless included' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         linkage do
           [{ type: :posts, id: '5' }]
         end

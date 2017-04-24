@@ -179,7 +179,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
       attribute :name
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         link :self do
           "http://api.example.com/users/#{@object.id}/relationships/posts"
         end

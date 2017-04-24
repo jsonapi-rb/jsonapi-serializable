@@ -39,7 +39,7 @@ module JSONAPI
           # Handles automatic key formatting for relationships.
           def relationship(name, options = {}, &block)
             rel_block = proc do
-              data(options[:class]) { @object.public_send(name) }
+              data { @object.public_send(name) }
               instance_eval(&block) unless block.nil?
             end
             super(key_format.call(name), options, &rel_block)
