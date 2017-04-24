@@ -1,21 +1,8 @@
 module JSONAPI
   module Serializable
     class ResourceBuilder
-      DEFAULT_RESOURCE_INFERRER = lambda do |object_klass_name|
-        names = object_klass_name.split('::'.freeze)
-        klass_name = names.pop
-        namespace = names.join('::'.freeze)
-
-        klass_name = [namespace, "Serializable#{klass_name}"]
-                     .reject(&:nil?)
-                     .reject(&:empty?)
-                     .join('::'.freeze)
-
-        Object.const_get(klass_name)
-      end
-
       def initialize(inferrer = nil)
-        @inferrer = inferrer || DEFAULT_RESOURCE_INFERRER
+        @inferrer = inferrer
 
         freeze
       end
@@ -38,7 +25,6 @@ module JSONAPI
       end
 
       # @api private
-      # rubocop:disable Metrics/MethodLength
       def serializable_class(object, klass)
         klass =
           if klass.nil?
@@ -51,7 +37,6 @@ module JSONAPI
 
         reify_class(klass)
       end
-      # rubocop:enable Metrics/MethodLength
 
       # @api private
       def reify_class(klass)
@@ -61,7 +46,6 @@ module JSONAPI
           Object.const_get(klass)
         else
           # TODO(beauby): Raise meaningful exception.
-          raise
         end
       end
     end

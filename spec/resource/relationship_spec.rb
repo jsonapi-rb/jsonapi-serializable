@@ -7,7 +7,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'forwards to @object by default' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts
+      relationship :posts, class: SerializablePost
     end
 
     resource = klass.new(object: user)
@@ -23,7 +23,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports overriding related resources with objects' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         data { @object.posts.reverse }
       end
     end
@@ -63,7 +63,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports meta' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         meta foo: 'bar'
       end
     end
@@ -82,7 +82,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports links' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         link :self do
           "http://api.example.com/users/#{@object.id}/relationships/posts"
         end
@@ -113,7 +113,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports overriding linkage data' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts do
+      relationship :posts, class: SerializablePost do
         linkage do
           @object.posts.map do |post|
             { id: (post.id + 1).to_s, type: 'blogs', meta: { foo: 'bar' } }

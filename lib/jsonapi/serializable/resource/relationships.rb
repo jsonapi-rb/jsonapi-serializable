@@ -11,8 +11,10 @@ module JSONAPI
             extend DSL
             class << self
               attr_accessor :relationship_blocks
+              attr_accessor :relationship_options
             end
-            self.relationship_blocks = {}
+            self.relationship_blocks  = {}
+            self.relationship_options = {}
           end
         end
 
@@ -20,7 +22,8 @@ module JSONAPI
           super
           @_relationships = self.class.relationship_blocks
                                 .each_with_object({}) do |(k, v), h|
-            h[k] = Relationship.new(@_exposures, &v)
+            opts = self.class.relationship_options[k] || {}
+            h[k] = Relationship.new(@_exposures, opts, &v)
           end
         end
 
@@ -45,7 +48,8 @@ module JSONAPI
         module DSL
           def inherited(klass)
             super
-            klass.relationship_blocks = relationship_blocks.dup
+            klass.relationship_blocks  = relationship_blocks.dup
+            klass.relationship_options = relationship_options.dup
           end
 
           # Declare a relationship for this resource. The properties of the
@@ -54,6 +58,7 @@ module JSONAPI
           # @see JSONAPI::Serializable::Relationship
           #
           # @param [Symbol] name The key of the relationship.
+          # @param [Hash] options The options for the relationship.
           #
           # @example
           #   relationship :posts do
@@ -80,10 +85,11 @@ module JSONAPI
           #   end
           def relationship(name, options = {}, &block)
             rel_block = proc do
-              data(options[:class]) { @object.public_send(name) }
+              data { @object.public_send(name) }
               instance_eval(&block) unless block.nil?
             end
-            relationship_blocks[name.to_sym] = rel_block
+            relationship_blocks[name.to_sym]  = rel_block
+            relationship_options[name.to_sym] = options
           end
           alias has_many   relationship
           alias has_one    relationship

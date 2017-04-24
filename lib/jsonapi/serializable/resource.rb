@@ -22,10 +22,10 @@ module JSONAPI
       id { @object.public_send(:id).to_s }
 
       def initialize(exposures = {})
-        exposures.each { |k, v| instance_variable_set("@#{k}", v) }
-        @_exposures = exposures
-        @_exposures[:_resource_builder] ||=
-          JSONAPI::Serializable::ResourceBuilder.new
+        @_exposures = {
+          _resource_builder: JSONAPI::Serializable::ResourceBuilder.new
+        }.merge(exposures)
+        @_exposures.each { |k, v| instance_variable_set("@#{k}", v) }
       end
 
       def as_jsonapi(*)
