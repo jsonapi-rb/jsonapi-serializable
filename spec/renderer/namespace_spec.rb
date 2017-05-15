@@ -7,12 +7,11 @@ describe JSONAPI::Serializable::Renderer, '#render' do
   end
 
   it 'finds a namespaced serializer' do
-    json = JSONAPI::Serializable::Renderer.render(
+    hash = JSONAPI::Serializable::Renderer.render(
       user, include: [:posts], namespace: 'API'
     )
-    hash = JSON.parse(json)
 
-    expect(hash['data']['type']).to eq('api_users')
-    expect(hash['included'][0]['type']).to eq('api_posts')
+    expect(hash[:data][:type]).to eq(:api_users)
+    expect(hash[:included][0][:type]).to eq(:api_posts)
   end
 end

@@ -19,7 +19,7 @@ module JSONAPI
 
         resources = resource_builder.build(objects, exposures, klass)
 
-        JSONAPI.render(options.merge(data: resources)).to_json
+        JSONAPI.render(options.merge(data: resources))
       end
 
       private
@@ -40,7 +40,7 @@ module JSONAPI
       end
 
       def render(errors, options)
-        JSONAPI.render(options.merge(errors: errors)).to_json
+        JSONAPI.render(options.merge(errors: errors))
       end
     end
   end
