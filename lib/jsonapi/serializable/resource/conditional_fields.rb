@@ -16,9 +16,11 @@ module JSONAPI
           klass.class_eval do
             extend DSL
             class << self
-              attr_accessor :condition_blocks
+              attr_accessor :field_condition_blocks
+              attr_accessor :link_condition_blocks
             end
-            self.condition_blocks ||= {}
+            self.field_condition_blocks ||= {}
+            self.link_condition_blocks ||= {}
           end
         end
 
@@ -26,7 +28,8 @@ module JSONAPI
         module DSL
           def inherited(klass)
             super
-            klass.condition_blocks = condition_blocks.dup
+            klass.field_condition_blocks = field_condition_blocks.dup
+            klass.link_condition_blocks = link_condition_blocks.dup
           end
 
           # Handle the `if` and `unless` options for attributes.
@@ -36,7 +39,7 @@ module JSONAPI
           #
           def attribute(name, options = {}, &block)
             super
-            _register_condition(name, options)
+            _register_condition(field_condition_blocks, name, options)
           end
 
           # Handle the `if` and `unless` options for relationships (has_one,
@@ -47,7 +50,19 @@ module JSONAPI
           #
           def relationship(name, options = {}, &block)
             super
-            _register_condition(name, options)
+            _register_condition(field_condition_blocks, name, options)
+          end
+
+          # Handle the `if` and `unless` options for links.
+          #
+          # @example
+          #
+          #   link :self, if: -> { @object.render_self_link? } do
+          #     "..."
+          #   end
+          def link(name, options = {}, &block)
+            super(name, &block)
+            _register_condition(link_condition_blocks, name, options)
           end
 
           # NOTE(beauby): Re-aliasing those is necessary for the
@@ -57,7 +72,7 @@ module JSONAPI
           alias belongs_to relationship
 
           # @api private
-          def _register_condition(name, options)
+          def _register_condition(condition_blocks, name, options)
             condition_blocks[name.to_sym] =
               if options.key?(:if)
                 options[:if]
@@ -69,17 +84,28 @@ module JSONAPI
 
         # @api private
         def requested_attributes(fields)
-          super.select { |k, _| _conditionally_included?(k) }
+          super.select do |k, _|
+            _conditionally_included?(self.class.field_condition_blocks, k)
+          end
         end
 
         # @api private
         def requested_relationships(fields)
-          super.select { |k, _| _conditionally_included?(k) }
+          super.select do |k, _|
+            _conditionally_included?(self.class.field_condition_blocks, k)
+          end
         end
 
         # @api private
-        def _conditionally_included?(field)
-          condition = self.class.condition_blocks[field]
+        def link_blocks
+          super.select do |k, _|
+            _conditionally_included?(self.class.link_condition_blocks, k)
+          end
+        end
+
+        # @api private
+        def _conditionally_included?(condition_blocks, field)
+          condition = condition_blocks[field]
           condition.nil? || instance_exec(&condition)
         end
       end

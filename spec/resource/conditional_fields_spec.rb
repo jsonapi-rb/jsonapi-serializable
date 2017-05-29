@@ -85,6 +85,32 @@ describe JSONAPI::Serializable::Resource do
     end
   end
 
+  context 'when a link is conditional' do
+    before do
+      klass.class_eval do
+        prepend JSONAPI::Serializable::Resource::ConditionalFields
+
+        link :self, if: proc { @conditional } do
+          'https://example.com/users/42'
+        end
+      end
+    end
+
+    subject { resource.as_jsonapi[:links] }
+
+    context 'and the clause is true' do
+      let(:conditional) { true }
+
+      it { is_expected.to eq(self: 'https://example.com/users/42') }
+    end
+
+    context 'and the clause is false' do
+      let(:conditional) { false }
+
+      it { is_expected.to be_nil }
+    end
+  end
+
   context 'when inheriting' do
     before do
       klass.class_eval do
@@ -103,6 +129,30 @@ describe JSONAPI::Serializable::Resource do
       let(:conditional) { false }
 
       it { is_expected.to be_nil }
+    end
+  end
+
+  context 'when a field and a link have the same name' do
+    before do
+      klass.class_eval do
+        prepend JSONAPI::Serializable::Resource::ConditionalFields
+
+        attribute :name, if: proc { @conditional } do
+          'attribute'
+        end
+
+        link :name, unless: proc { @conditional } do
+          'link'
+        end
+      end
+    end
+
+    let(:conditional) { true }
+    subject { resource.as_jsonapi }
+
+    it "doesn't override previously registered condition" do
+      expect(subject[:attributes]).to eq(name: 'attribute')
+      expect(subject).not_to have_key(:links)
     end
   end
 end
