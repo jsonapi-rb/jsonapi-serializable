@@ -20,7 +20,7 @@ describe JSONAPI::Serializable::Resource do
 
     before do
       klass.class_eval do
-        prepend JSONAPI::Serializable::Resource::KeyFormat
+        extend JSONAPI::Serializable::Resource::KeyFormat
         self.key_format = proc { |k| k.to_s.capitalize }
         attribute :name
         attribute :address
@@ -58,6 +58,14 @@ describe JSONAPI::Serializable::Resource do
       let(:resource) { subclass.new(object: object) }
 
       it { is_expected.to eq(expected) }
+    end
+  end
+
+  context 'when KeyFormat is prepended' do
+    it 'outputs a deprecation warning' do
+      expect do
+        klass.prepend JSONAPI::Serializable::Resource::KeyFormat
+      end.to output(/DERPRECATION WARNING/).to_stderr
     end
   end
 end
