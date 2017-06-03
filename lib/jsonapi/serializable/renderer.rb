@@ -3,12 +3,8 @@ require 'jsonapi/serializable/resource_builder'
 
 module JSONAPI
   module Serializable
-    class Renderer
-      def self.render(objects, options = {})
-        new.render(objects, options)
-      end
-
-      def render(objects, options = {})
+    class SuccessRenderer
+      def render(resources, options = {})
         options   = options.dup
         klass     = options.delete(:class)
         namespace = options.delete(:namespace)
@@ -17,7 +13,7 @@ module JSONAPI
         resource_builder = JSONAPI::Serializable::ResourceBuilder.new(inferrer)
         exposures = expose.merge(_resource_builder: resource_builder)
 
-        resources = resource_builder.build(objects, exposures, klass)
+        resources = resource_builder.build(resources, exposures, klass)
 
         JSONAPI.render(options.merge(data: resources))
       end
@@ -35,11 +31,7 @@ module JSONAPI
     end
 
     class ErrorRenderer
-      def self.render(errors, options)
-        new.render(errors, options)
-      end
-
-      def render(errors, options)
+      def render(errors, options = {})
         JSONAPI.render(options.merge(errors: errors))
       end
     end
