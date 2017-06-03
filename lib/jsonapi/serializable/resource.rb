@@ -29,14 +29,10 @@ module JSONAPI
                  else
                    self.class.type_val || :unknown
                  end
-        @_attributes = {}
         @_relationships = self.class.relationship_blocks
                               .each_with_object({}) do |(k, v), h|
           opts = self.class.relationship_options[k] || {}
           h[k] = Relationship.new(@_exposures, opts, &v)
-        end
-        @_links = self.class.link_blocks.each_with_object({}) do |(k, v), h|
-          h[k] = Link.as_jsonapi(@_exposures, &v)
         end
         @_meta = if (b = self.class.meta_block)
                    instance_eval(&b)
@@ -57,12 +53,15 @@ module JSONAPI
                .each_with_object({}) do |(k, v), h|
           h[k] = v.as_jsonapi(include.include?(k))
         end
+        links = link_blocks.each_with_object({}) do |(k, v), h|
+          h[k] = Link.as_jsonapi(@_exposures, &v)
+        end
         {}.tap do |hash|
           hash[:id]   = @_id
           hash[:type] = @_type
           hash[:attributes]    = attrs if attrs.any?
           hash[:relationships] = rels  if rels.any?
-          hash[:links] = @_links if @_links.any?
+          hash[:links] = links if links.any?
           hash[:meta]  = @_meta  unless @_meta.nil?
         end
       end
@@ -93,6 +92,11 @@ module JSONAPI
       # @api private
       def requested_relationships(fields)
         @_relationships.select { |k, _| fields.nil? || fields.include?(k) }
+      end
+
+      # @api private
+      def link_blocks
+        self.class.link_blocks
       end
     end
   end
