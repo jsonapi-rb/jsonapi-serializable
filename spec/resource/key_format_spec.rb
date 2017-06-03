@@ -63,9 +63,8 @@ describe JSONAPI::Serializable::Resource do
 
   context 'when KeyFormat is prepended' do
     it 'outputs a deprecation warning' do
-      expect do
-        klass.prepend JSONAPI::Serializable::Resource::KeyFormat
-      end.to output(/DERPRECATION WARNING/).to_stderr
+      expect { klass.prepend JSONAPI::Serializable::Resource::KeyFormat }
+        .to output(/DERPRECATION WARNING/).to_stderr
     end
   end
 end
