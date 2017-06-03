@@ -1,6 +1,7 @@
 module JSONAPI
   module Serializable
     class ResourceBuilder
+      # @api private
       def initialize(inferrer = nil)
         @inferrer = inferrer
         @lookup_cache = {}
@@ -8,6 +9,7 @@ module JSONAPI
         freeze
       end
 
+      # @api private
       def build(objects, expose, klass = nil)
         return objects if objects.nil? ||
                           Array(objects).first.respond_to?(:as_jsonapi)
@@ -21,26 +23,32 @@ module JSONAPI
 
       private
 
+      # @api private
       def _build(object, expose, klass)
-        serializable_class(object, klass).new(expose.merge(object: object))
+        serializable_class(object.class.name, klass)
+          .new(expose.merge(object: object))
       end
 
       # @api private
-      def serializable_class(object, klass)
-        klass = klass[object.class.name.to_sym] if klass.is_a?(Hash)
+      def serializable_class(object_class_name, klass)
+        klass = klass[object_class_name.to_sym] if klass.is_a?(Hash)
 
-        @lookup_cache[[object.class.name, klass.to_s]] ||=
-          reify_class(klass || @inferrer.call(object.class.name))
+        @lookup_cache[[object_class_name, klass.to_s]] ||=
+          reify_class(klass || @inferrer.call(object_class_name))
       end
 
       # @api private
       def reify_class(klass)
         if klass.is_a?(Class)
           klass
-        elsif klass.is_a?(String)
-          Object.const_get(klass)
+        elsif klass.is_a?(String) || klass.is_a?(Symbol)
+          begin
+            Object.const_get(klass)
+          rescue NameError
+            raise NameError, "Undefined serializable class #{klass}"
+          end
         else
-          # TODO(beauby): Raise meaningful exception.
+          raise ArgumentError, "Invalid serializable class #{klass}"
         end
       end
     end
