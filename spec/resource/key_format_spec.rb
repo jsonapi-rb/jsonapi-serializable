@@ -21,7 +21,7 @@ describe JSONAPI::Serializable::Resource do
     before do
       klass.class_eval do
         extend JSONAPI::Serializable::Resource::KeyFormat
-        self.key_format = proc { |k| k.to_s.capitalize }
+        key_format ->(k) { k.to_s.capitalize }
         attribute :name
         attribute :address
         relationship :posts, class: SerializablePost
