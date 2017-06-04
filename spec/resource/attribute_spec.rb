@@ -1,20 +1,15 @@
 require 'spec_helper'
 
 describe JSONAPI::Serializable::Resource, '.attribute' do
-  let(:klass) do
-    Class.new(JSONAPI::Serializable::Resource) do
-      type 'foo'
-    end
-  end
-
-  let(:object)   { User.new }
+  let(:object)   { User.new(name: 'foo') }
   let(:resource) { klass.new(object: object) }
 
   subject { resource.as_jsonapi[:attributes] }
 
   context 'when supplied a block value' do
-    before do
-      klass.class_eval do
+    let(:klass) do
+      Class.new(JSONAPI::Serializable::Resource) do
+        type 'foo'
         attribute(:name) { 'foo' }
       end
     end
@@ -23,8 +18,9 @@ describe JSONAPI::Serializable::Resource, '.attribute' do
   end
 
   context 'when defining multiple attributes' do
-    before do
-      klass.class_eval do
+    let(:klass) do
+      Class.new(JSONAPI::Serializable::Resource) do
+        type 'foo'
         attribute(:name)    { 'foo' }
         attribute(:address) { 'bar' }
       end
@@ -33,16 +29,47 @@ describe JSONAPI::Serializable::Resource, '.attribute' do
     it { is_expected.to eq(name: 'foo', address: 'bar') }
   end
 
-  context 'when no block supplied' do
-    before do
-      klass.class_eval do
-        attribute :name
+  context 'when redefining attributes' do
+    let(:klass) do
+      Class.new(JSONAPI::Serializable::Resource) do
+        type 'foo'
+        attribute(:name) { 'foo' }
+        attribute(:name) { 'bar' }
       end
-      object.name = 'foo'
     end
 
-    it 'forwards to @object' do
-      expect(subject).to eq(name: 'foo')
+    it { is_expected.to eq(name: 'bar') }
+  end
+
+  context 'when no block supplied' do
+    let(:klass) do
+      Class.new(JSONAPI::Serializable::Resource) do
+        type 'foo'
+        attribute :name
+      end
+    end
+
+    it { is_expected.to eq(name: 'foo') }
+  end
+
+  context 'when inheriting' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'foo'
+      attribute :name
+    end
+
+    subclass = Class.new(klass) do
+      attribute(:name) { 'bar' }
+    end
+
+    it 'overrides superclass definition' do
+      expect(subclass.new(object: object).as_jsonapi[:attributes])
+        .to eq(name: 'bar')
+    end
+
+    it 'does not modify superclass definition' do
+      expect(klass.new(object: object).as_jsonapi[:attributes])
+        .to eq(name: 'foo')
     end
   end
 end
