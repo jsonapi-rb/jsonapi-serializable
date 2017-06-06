@@ -30,6 +30,17 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
     expect(actual.first.class).to eq(SerializableBlog)
   end
 
+  it 'allows specifying serializable class explicitly as a symbol' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+      relationship :posts, class: :SerializableBlog
+    end
+    resource = klass.new(object: user)
+    actual = resource.jsonapi_related([:posts])[:posts]
+
+    expect(actual.first.class).to eq(SerializableBlog)
+  end
+
   it 'allows specifying serializable classes explicitly as a hash' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
@@ -52,5 +63,37 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
     actual = resource.jsonapi_related([:posts])[:posts]
 
     expect(actual.first.class).to eq(SerializableBlog)
+  end
+
+  context 'when an undefined serializable class is specified' do
+    let(:klass) do
+      Class.new(JSONAPI::Serializable::Resource) do
+        type 'users'
+        relationship :posts, class: 'Foo'
+      end
+    end
+
+    it 'fails with NameError' do
+      resource = klass.new(object: user)
+
+      expect { resource.jsonapi_related([:posts]) }
+        .to raise_error(NameError, 'Undefined serializable class Foo')
+    end
+  end
+
+  context 'when an invalid serializable class is specified' do
+    let(:klass) do
+      Class.new(JSONAPI::Serializable::Resource) do
+        type 'users'
+        relationship :posts, class: Object.new
+      end
+    end
+
+    it 'fails with ArgumentError' do
+      resource = klass.new(object: user)
+
+      expect { resource.jsonapi_related([:posts]) }
+        .to raise_error(ArgumentError, /Invalid serializable class/)
+    end
   end
 end
