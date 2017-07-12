@@ -63,7 +63,7 @@ module JSONAPI
       end
     end
 
-    class ErrorRenderer
+    class ErrorsRenderer
       # Serialize errors into a JSON API document.
       #
       # @param [Array] errors

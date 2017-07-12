@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::ErrorRenderer, '#render' do
+describe JSONAPI::Serializable::ErrorsRenderer, '#render' do
   let(:errors) do
     [
       JSONAPI::Serializable::Error.create(id: 'foo', title: 'bar'),
