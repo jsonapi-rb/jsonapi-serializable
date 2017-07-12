@@ -4,6 +4,10 @@ require 'jsonapi/serializable/resource_builder'
 module JSONAPI
   module Serializable
     class SuccessRenderer
+      def initialize(renderer = JSONAPI::Renderer.new)
+        @renderer = renderer
+      end
+
       # Serialize resources into a JSON API document.
       #
       # @param [nil,Object,Array] resources
@@ -48,7 +52,7 @@ module JSONAPI
 
         resources = resource_builder.build(resources, exposures, klass)
 
-        JSONAPI.render(options.merge(data: resources))
+        @renderer.render(options.merge(data: resources))
       end
 
       private
@@ -64,6 +68,10 @@ module JSONAPI
     end
 
     class ErrorsRenderer
+      def initialize(renderer = JSONAPI::Renderer.new)
+        @renderer = renderer
+      end
+
       # Serialize errors into a JSON API document.
       #
       # @param [Array] errors
@@ -75,7 +83,7 @@ module JSONAPI
       #   JSONAPI.serialize_errors([error])
       #   # => { errors: [{ id: 'foo', title: 'bar' }] }
       def render(errors, options = {})
-        JSONAPI.render(options.merge(errors: errors))
+        @renderer.render(options.merge(errors: errors))
       end
     end
   end
