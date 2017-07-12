@@ -4,10 +4,10 @@ module JSONAPI
       # Extension for handling automatic key formatting of
       #   attributes/relationships.
       #
-      # @usage
+      # @example
       #   class SerializableUser < JSONAPI::Serializable::Resource
       #     extend JSONAPI::Serializable::Resource::KeyFormat
-      #     self.key_format = proc { |key| key.camelize }
+      #     key_format -> (key) { key.camelize }
       #
       #     attribute :user_name
       #     has_many :close_friends
@@ -26,20 +26,33 @@ module JSONAPI
         def self.extended(klass)
           klass.class_eval do
             class << self
-              attr_accessor :key_format
+              attr_accessor :_key_formatter
             end
           end
         end
 
         def inherited(klass)
           super
-          klass.key_format = key_format
+          klass._key_formatter = _key_formatter
+        end
+
+        # Set the callable responsible for formatting keys, either directly, or
+        #   via a block.
+        #
+        # @example
+        #   key_format -> (key) { key.capitalize }
+        #
+        # @example
+        #   key_format { |key| key.capitalize }
+        #
+        def key_format(callable = nil, &block)
+          self._key_formatter = callable || block
         end
 
         # Handles automatic key formatting for attributes.
         def attribute(name, options = {}, &block)
           block ||= proc { @object.public_send(name) }
-          super(key_format.call(name), options, &block)
+          super(_key_formatter.call(name), options, &block)
         end
 
         # Handles automatic key formatting for relationships.
@@ -48,7 +61,7 @@ module JSONAPI
             data { @object.public_send(name) }
             instance_eval(&block) unless block.nil?
           end
-          super(key_format.call(name), options, &rel_block)
+          super(_key_formatter.call(name), options, &rel_block)
         end
 
         # NOTE(beauby): Re-aliasing those is necessary for the
