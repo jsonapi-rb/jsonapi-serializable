@@ -10,25 +10,24 @@ module JSONAPI
 
       # Serialize resources into a JSON API document.
       #
-      # @param [nil,Object,Array] resources
-      # @param [Hash] options @see JSONAPI.render
-      # @option [Class,Symbol,String,Hash{Symbol,String=>Class,Symbol,String}]
-      #   class The serializable resource class(es) to use for the primary
-      #   resources.
-      # @option [String] namespace The namespace in which to look for
+      # @param resources [nil,Object,Array]
+      # @param options [Hash]@see JSONAPI.render
+      # @option class [Class,Symbol,String,Hash{Symbol,String=>Class,Symbol,String}]
+      #   The serializable resource class(es) to use for the primary resources.
+      # @option namespace [String] The namespace in which to look for
       #   serializable resource classes.
-      # @option [#call] inferrer The callable used for inferring a serializable
+      # @option inferrer [#call] The callable used for inferring a serializable
       #   resource class name from a resource class name.
-      # @option [Hash] expose The exposures made available in serializable
+      # @option expose [Hash] The exposures made available in serializable
       #   resource class instances as instance variables.
       # @return [Hash]
       #
       # @example
-      #   JSONAPI.serialize(nil)
+      #   renderer.render(nil)
       #   # => { data: nil }
       #
       # @example
-      #   JSONAPI.serialize(user)
+      #   renderer.render(user)
       #   # => {
       #          data: {
       #            type: 'users',
@@ -39,7 +38,7 @@ module JSONAPI
       #        }
       #
       # @example
-      #   JSONAPI.serialize([user1, user2])
+      #   renderer.render([user1, user2])
       #   # => { data: [{ type: 'users', id: 'foo', ... }, ...] }
       def render(resources, options = {})
         options   = options.dup
@@ -74,13 +73,13 @@ module JSONAPI
 
       # Serialize errors into a JSON API document.
       #
-      # @param [Array] errors
-      # @param [Hash] options @see JSONAPI.render
+      # @param errors [Array]
+      # @param options [Hash] @see JSONAPI.render
       # @return [Hash]
       #
       # @example
       #   error = JSONAPI::Serializable::Error.create(id: 'foo', title: 'bar')
-      #   JSONAPI.serialize_errors([error])
+      #   renderer.render([error])
       #   # => { errors: [{ id: 'foo', title: 'bar' }] }
       def render(errors, options = {})
         @renderer.render(options.merge(errors: errors))
