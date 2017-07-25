@@ -11,13 +11,13 @@ module JSONAPI
       # Serialize resources into a JSON API document.
       #
       # @param resources [nil,Object,Array]
-      # @param options [Hash]@see JSONAPI.render
+      # @param options [Hash] @see JSONAPI.render
       # @option class [Class,Symbol,String,Hash{Symbol,String=>Class,Symbol,String}]
       #   The serializable resource class(es) to use for the primary resources.
       # @option namespace [String] The namespace in which to look for
       #   serializable resource classes.
-      # @option inferrer [#call] The callable used for inferring a serializable
-      #   resource class name from a resource class name.
+      # @option inferrer [Hash{Symbol=>String}] A map specifying for each type
+      #   the corresponding serializable resource class name.
       # @option expose [Hash] The exposures made available in serializable
       #   resource class instances as instance variables.
       # @return [Hash]
