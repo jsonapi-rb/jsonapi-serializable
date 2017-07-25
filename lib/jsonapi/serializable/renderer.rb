@@ -11,13 +11,13 @@ module JSONAPI
       # Serialize resources into a JSON API document.
       #
       # @param resources [nil,Object,Array]
-      # @param options [Hash]@see JSONAPI.render
+      # @param options [Hash] @see JSONAPI.render
       # @option class [Class,Symbol,String,Hash{Symbol,String=>Class,Symbol,String}]
       #   The serializable resource class(es) to use for the primary resources.
       # @option namespace [String] The namespace in which to look for
       #   serializable resource classes.
-      # @option inferrer [#call] The callable used for inferring a serializable
-      #   resource class name from a resource class name.
+      # @option inferrer [Hash{Symbol=>String}] A map specifying for each type
+      #   the corresponding serializable resource class name.
       # @option expose [Hash] The exposures made available in serializable
       #   resource class instances as instance variables.
       # @return [Hash]
@@ -44,7 +44,8 @@ module JSONAPI
         options   = options.dup
         klass     = options.delete(:class)
         namespace = options.delete(:namespace)
-        inferrer  = options.delete(:inferrer) || namespace_inferrer(namespace)
+        inferrer  = options.delete(:inferrer) || default_inferrer
+        inferrer  = namespace_inferrer(namespace, inferrer) if namespace
         expose    = options.delete(:expose) || {}
         resource_builder = JSONAPI::Serializable::ResourceBuilder.new(inferrer)
         exposures = expose.merge(_resource_builder: resource_builder)
@@ -57,12 +58,17 @@ module JSONAPI
       private
 
       # @api private
-      def namespace_inferrer(namespace)
-        proc do |class_name|
-          names = class_name.split('::')
+      def default_inferrer
+        Hash.new do |h, k|
+          names = k.to_s.split('::')
           klass = names.pop
-          [namespace, *names, "Serializable#{klass}"].reject(&:nil?).join('::')
+          h[k] = [*names, "Serializable#{klass}"].join('::')
         end
+      end
+
+      # @api private
+      def namespace_inferrer(namespace, inferrer)
+        Hash.new { |h, k| h[k] = "#{namespace}::#{inferrer[k]}" }
       end
     end
 
