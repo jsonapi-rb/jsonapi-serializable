@@ -29,14 +29,14 @@ module JSONAPI
               attr_accessor :link_condition_blocks
             end
             self.field_condition_blocks ||= {}
-            self.link_condition_blocks ||= {}
+            self.link_condition_blocks  ||= {}
           end
         end
 
         def inherited(klass)
           super
           klass.field_condition_blocks = field_condition_blocks.dup
-          klass.link_condition_blocks = link_condition_blocks.dup
+          klass.link_condition_blocks  = link_condition_blocks.dup
         end
 
         # Handle the `if` and `unless` options for attributes.

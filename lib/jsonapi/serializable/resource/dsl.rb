@@ -34,7 +34,7 @@ module JSONAPI
         # @yieldreturn [String] The id of the resource.
         #
         # @example
-        #   id { @user.id.to_s }
+        #   id { @object.id.to_s }
         def id(&block)
           self.id_block = block
         end
@@ -93,12 +93,12 @@ module JSONAPI
         #
         # @example
         #   link(:self) do
-        #     "http://api.example.com/users/#{@user.id}"
+        #     "http://api.example.com/users/#{@object.id}"
         #   end
         #
         # @example
         #    link(:self) do
-        #      href "http://api.example.com/users/#{@user.id}"
+        #      href "http://api.example.com/users/#{@object.id}"
         #      meta is_self: true
         #    end
         def link(name, &block)
@@ -133,26 +133,21 @@ module JSONAPI
         # @param [Hash] options The options for the relationship.
         #
         # @example
-        #   relationship :posts do
-        #     resources { @user.posts.map { |p| PostResource.new(post: p) } }
-        #   end
-        #
-        # @example
         #   relationship :author do
-        #     resources do
-        #       @post.author && UserResource.new(user: @post.author)
-        #     end
         #     data do
-        #       { type: 'users', id: @post.author_id }
+        #       @object.author
+        #     end
+        #     linkage do
+        #       { type: 'users', id: @object.author_id }
         #     end
         #     link(:self) do
-        #       "http://api.example.com/posts/#{@post.id}/relationships/author"
+        #       "http://api.example.com/posts/#{@object.id}/relationships/author"
         #     end
         #     link(:related) do
-        #       "http://api.example.com/posts/#{@post.id}/author"
+        #       "http://api.example.com/posts/#{@object.id}/author"
         #     end
         #     meta do
-        #       { author_online: @post.author.online? }
+        #       { author_online: @object.author.online? }
         #     end
         #   end
         def relationship(name, options = {}, &block)
@@ -164,8 +159,8 @@ module JSONAPI
           relationship_options[name.to_sym] = options
         end
 
-        alias has_many relationship
-        alias has_one relationship
+        alias has_many   relationship
+        alias has_one    relationship
         alias belongs_to relationship
       end
     end
