@@ -44,7 +44,8 @@ module JSONAPI
         options   = options.dup
         klass     = options.delete(:class)
         namespace = options.delete(:namespace)
-        inferrer  = options.delete(:inferrer) || namespace_inferrer(namespace)
+        inferrer  = options.delete(:inferrer) || default_inferrer
+        inferrer  = namespace_inferrer(namespace, inferrer) if namespace
         expose    = options.delete(:expose) || {}
         resource_builder = JSONAPI::Serializable::ResourceBuilder.new(inferrer)
         exposures = expose.merge(_resource_builder: resource_builder)
@@ -57,14 +58,17 @@ module JSONAPI
       private
 
       # @api private
-      def namespace_inferrer(namespace)
+      def default_inferrer
         Hash.new do |h, k|
           names = k.to_s.split('::')
           klass = names.pop
-          h[k] = [namespace, *names, "Serializable#{klass}"]
-                   .reject(&:nil?)
-                   .join('::')
+          h[k] = [*names, "Serializable#{klass}"].join('::')
         end
+      end
+
+      # @api private
+      def namespace_inferrer(namespace, inferrer)
+        Hash.new { |h, k| h[k] = "#{namespace}::#{inferrer[k]}" }
       end
     end
 
