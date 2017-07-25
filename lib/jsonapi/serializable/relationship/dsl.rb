@@ -15,17 +15,7 @@ module JSONAPI
         #
         # @example
         #   data do
-        #     @user.posts.map { |p| PostResource.new(post: p) }
-        #   end
-        #
-        # @example
-        #   data do
-        #     @post.author && UserResource.new(user: @user.author)
-        #   end
-        #
-        # @example
-        #   data do
-        #     @user.posts
+        #     @object.posts
         #   end
         # end
         def data
