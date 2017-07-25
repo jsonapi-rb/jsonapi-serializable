@@ -58,10 +58,12 @@ module JSONAPI
 
       # @api private
       def namespace_inferrer(namespace)
-        proc do |class_name|
-          names = class_name.split('::')
+        Hash.new do |h, k|
+          names = k.to_s.split('::')
           klass = names.pop
-          [namespace, *names, "Serializable#{klass}"].reject(&:nil?).join('::')
+          h[k] = [namespace, *names, "Serializable#{klass}"]
+                   .reject(&:nil?)
+                   .join('::')
         end
       end
     end

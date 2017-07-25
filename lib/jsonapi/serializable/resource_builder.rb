@@ -25,7 +25,7 @@ module JSONAPI
 
       # @api private
       def _build(object, expose, klass)
-        serializable_class(object.class.name, klass)
+        serializable_class(object.class.name, klass || @inferrer)
           .new(expose.merge(object: object))
       end
 
@@ -33,8 +33,7 @@ module JSONAPI
       def serializable_class(object_class_name, klass)
         klass = klass[object_class_name.to_sym] if klass.is_a?(Hash)
 
-        @lookup_cache[[object_class_name, klass.to_s]] ||=
-          reify_class(klass || @inferrer.call(object_class_name))
+        @lookup_cache[[object_class_name, klass.to_s]] ||= reify_class(klass)
       end
 
       # @api private

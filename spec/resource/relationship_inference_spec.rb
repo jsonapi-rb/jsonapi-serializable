@@ -57,7 +57,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
       type 'users'
       relationship :posts
     end
-    inferrer = proc { |_resource_class_name| SerializableBlog }
+    inferrer = Hash.new { |_resource_class_name| SerializableBlog }
     resource_builder = JSONAPI::Serializable::ResourceBuilder.new(inferrer)
     resource = klass.new(object: user, _resource_builder: resource_builder)
     actual = resource.jsonapi_related([:posts])[:posts]
