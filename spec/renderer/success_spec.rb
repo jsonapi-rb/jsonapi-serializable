@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe JSONAPI::Serializable::SuccessRenderer, '#render' do
+describe JSONAPI::Serializable::Renderer, '#render' do
   let(:posts) { [Post.new(id: 1), Post.new(id: 2)] }
   let(:user) do
     User.new(id: 'foo', name: 'Lucas', address: '22 Ruby drive', posts: posts)
