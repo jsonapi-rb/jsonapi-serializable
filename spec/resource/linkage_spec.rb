@@ -3,6 +3,9 @@ require 'spec_helper'
 describe JSONAPI::Serializable::Resource, '.linkage' do
   let(:posts) { [Post.new(id: 1), Post.new(id: 2)] }
   let(:user) { User.new(id: 'foo', posts: posts) }
+  let(:inferrer) do
+    Hash.new { |h, k| h[k] = Object.const_get("Serializable#{k}") }
+  end
 
   it 'defaults to forcing standard linkage' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
@@ -12,7 +15,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: inferrer)
     actual = resource.as_jsonapi[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '1' },
@@ -32,7 +35,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '5' }]
@@ -51,7 +54,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: inferrer)
     actual = resource.as_jsonapi[:relationships][:posts]
     expected = { meta: { included: false } }
 

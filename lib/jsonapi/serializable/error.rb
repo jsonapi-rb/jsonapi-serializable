@@ -35,12 +35,6 @@ module JSONAPI
                       :link_blocks
       end
 
-      def self.create(hash)
-        hash.each_with_object(new) do |(k, v), e|
-          e.instance_variable_set("@_#{k}", v)
-        end
-      end
-
       self.link_blocks = {}
 
       def self.inherited(klass)

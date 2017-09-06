@@ -100,7 +100,11 @@ describe JSONAPI::Serializable::Resource do
       type 'users'
       relationship :posts, class: post_klass
     end
-    resource = klass.new(object: user, foo: 'bar')
+    inferrer = {
+      Post: post_klass,
+      User: klass
+    }
+    resource = klass.new(object: user, foo: 'bar', _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: 'bar' }, { type: :posts, id: 'bar' }]

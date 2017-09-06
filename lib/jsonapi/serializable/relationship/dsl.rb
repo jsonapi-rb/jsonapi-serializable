@@ -1,17 +1,9 @@
-require 'jsonapi/serializable/resource_builder'
-
 module JSONAPI
   module Serializable
     class Relationship
       module DSL
         # Declare the related resources for this relationship.
         # @yieldreturn The related resources for this relationship.
-        #   If it is nil, an object implementing the Serializable::Resource
-        #   interface, an empty array, or an array of objects implementing the
-        #   Serializable::Resource interface, then it is used as is.
-        #   Otherwise an appropriate Serializable::Resource subclass is inferred
-        #   from the object(s)' namespace/class, the `class` relationship
-        #   option, and the @_resource_builder.
         #
         # @example
         #   data do
@@ -22,7 +14,18 @@ module JSONAPI
           # NOTE(beauby): Lazify computation since it is only needed when
           #   the corresponding relationship is included.
           @_resources_block = proc do
-            @_resource_builder.build(yield, @_exposures, @_options[:class])
+            resources = yield
+            if resources.nil?
+              nil
+            elsif resources.respond_to?(:to_ary)
+              Array(resources).map do |obj|
+                @_class[obj.class.name.to_sym]
+                  .new(@_exposures.merge(object: obj))
+              end
+            else
+              @_class[resources.class.name.to_sym]
+                .new(@_exposures.merge(object: resources))
+            end
           end
         end
 
