@@ -1,5 +1,4 @@
 require 'jsonapi/renderer'
-require 'jsonapi/serializable/resource_builder'
 
 module JSONAPI
   module Serializable
@@ -12,8 +11,8 @@ module JSONAPI
       #
       # @param resources [nil,Object,Array]
       # @param options [Hash] @see JSONAPI.render
-      # @option class [Hash{Symbol=>String}] A map specifying for each type
-      #   the corresponding serializable resource class name.
+      # @option class [Hash{Symbol=>Class}] A map specifying for each type
+      #   the corresponding serializable resource class.
       # @option expose [Hash] The exposures made available in serializable
       #   resource class instances as instance variables.
       # @return [Hash]
@@ -38,12 +37,11 @@ module JSONAPI
       #   # => { data: [{ type: 'users', id: 'foo', ... }, ...] }
       def render(resources, options = {})
         options   = options.dup
-        klass     = options.delete(:class)
+        klass     = options.delete(:class) || {}
         exposures = options.delete(:expose) || {}
-        resource_builder = JSONAPI::Serializable::ResourceBuilder.new(klass)
-        exposures = exposures.merge(_resource_builder: resource_builder)
+        exposures = exposures.merge(_class: klass)
 
-        resources = resource_builder.build(resources, exposures)
+        resources = build_resources(resources, exposures, klass)
 
         @renderer.render(options.merge(data: resources))
       end
@@ -52,8 +50,8 @@ module JSONAPI
       #
       # @param errors [Array]
       # @param options [Hash] @see JSONAPI.render
-      # @option klass [Hash{Symbol=>String}] A map specifying for each type
-      #   the corresponding serializable resource class name.
+      # @option class [Hash{Symbol=>Class}] A map specifying for each type
+      #   the corresponding serializable error class.
       # @option expose [Hash] The exposures made available in serializable
       #   error class instances as instance variables.
       # @return [Hash]
@@ -63,14 +61,31 @@ module JSONAPI
       #   renderer.render([error])
       #   # => { errors: [{ id: 'foo', title: 'bar' }] }
       def render_errors(errors, options = {})
-        options = options.dup
-        klass   = options.delete(:klass)
+        options   = options.dup
+        klass     = options.delete(:class) || {}
         exposures = options.delete(:expose) || {}
-        resource_builder = JSONAPI::Serializable::ResourceBuilder.new(klass)
 
-        errors = errors.flat_map { |e| resource_builder.build(e, exposures) }
+        errors = errors.map { |e| _build(e, exposures, klass) }
 
         @renderer.render(options.merge(errors: errors))
+      end
+
+      private
+
+      # @api private
+      def build_resources(resources, exposures, klass)
+        if resources.nil?
+          nil
+        elsif resources.respond_to?(:to_ary)
+          Array(resources).map { |obj| _build(obj, exposures, klass) }
+        else
+          _build(resources, exposures, klass)
+        end
+      end
+
+      # @api private
+      def _build(object, exposures, klass)
+        klass[object.class.name.to_sym].new(exposures.merge(object: object))
       end
     end
   end

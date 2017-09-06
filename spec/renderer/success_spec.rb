@@ -7,7 +7,7 @@ describe JSONAPI::Serializable::Renderer, '#render' do
   end
 
   it 'renders a success document' do
-    hash = subject.render(user, class: { User: 'SerializableUser' })
+    hash = subject.render(user, class: { User: SerializableUser })
 
     expect(hash[:data][:type]).to eq(:users)
   end
@@ -15,7 +15,7 @@ describe JSONAPI::Serializable::Renderer, '#render' do
   it 'renders a success document with included resources' do
     hash = subject.render(
       user, include: [:posts],
-      class: { User: 'SerializableUser', Post: 'SerializablePost' }
+      class: { User: SerializableUser, Post: SerializablePost }
     )
 
     expect(hash[:data][:type]).to eq(:users)
@@ -25,8 +25,8 @@ describe JSONAPI::Serializable::Renderer, '#render' do
   context 'when providing a custom explicit inferrer' do
     it 'uses the inferred serializable classes' do
       inferrer = {
-        User: 'API::SerializableUser',
-        Post: 'API::SerializablePost'
+        User: API::SerializableUser,
+        Post: API::SerializablePost
       }
       hash = subject.render(user, include: [:posts], class: inferrer)
 
@@ -37,7 +37,9 @@ describe JSONAPI::Serializable::Renderer, '#render' do
 
   context 'when providing a custom implicit inferrer' do
     it 'uses the inferred serializable classes' do
-      inferrer = Hash.new { |h, k| h[k] = "API::Serializable#{k}" }
+      inferrer = Hash.new do |h, k|
+        h[k] = Object.const_get("API::Serializable#{k}")
+      end
       hash = subject.render(user, include: [:posts], class: inferrer)
 
       expect(hash[:data][:type]).to eq(:api_users)

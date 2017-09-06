@@ -5,6 +5,9 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
   let(:user) do
     User.new(id: 'foo', name: 'Lucas', address: '22 Ruby drive', posts: posts)
   end
+  let(:inferrer) do
+    Hash.new { |h, k| h[k] = Object.const_get("Serializable#{k}") }
+  end
 
   it 'includes all fields by default' do
     resource = SerializableUser.new(object: user)
@@ -186,7 +189,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts])
     expected = {
       type: :users,
@@ -212,7 +215,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
         data { nil }
       end
     end
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts], fields: [:posts])
     expected = {
       type: :users,

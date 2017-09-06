@@ -7,10 +7,10 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'forwards to @object by default' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, class: SerializablePost
+      relationship :posts
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: { Post: SerializablePost })
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '1' },
@@ -23,34 +23,12 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports overriding related resources with objects' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, class: SerializablePost do
+      relationship :posts do
         data { @object.posts.reverse }
       end
     end
 
-    resource = klass.new(object: user)
-    actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
-    expected = {
-      data: [{ type: :posts, id: '2' },
-             { type: :posts, id: '1' }]
-    }
-
-    expect(actual).to eq(expected)
-  end
-
-  it 'supports overriding related resources with serializable objects' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      type 'users'
-      relationship :posts do
-        data do
-          @object.posts.reverse.map do |post|
-            SerializablePost.new(object: post)
-          end
-        end
-      end
-    end
-
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: { Post: SerializablePost })
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '2' },
@@ -63,12 +41,12 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports meta' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, class: SerializablePost do
+      relationship :posts do
         meta foo: 'bar'
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: { Post: SerializablePost })
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '1' },
@@ -82,7 +60,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports links' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, class: SerializablePost do
+      relationship :posts do
         link :self do
           "http://api.example.com/users/#{@object.id}/relationships/posts"
         end
@@ -93,7 +71,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: { Post: SerializablePost })
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '1' },
@@ -113,7 +91,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
   it 'supports overriding linkage data' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
-      relationship :posts, class: SerializablePost do
+      relationship :posts do
         linkage do
           @object.posts.map do |post|
             { id: (post.id + 1).to_s, type: 'blogs', meta: { foo: 'bar' } }
@@ -122,7 +100,7 @@ describe JSONAPI::Serializable::Resource, '.relationship' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(object: user, _class: { Post: SerializablePost })
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: 'blogs', id: '2', meta: { foo: 'bar' } },
