@@ -7,27 +7,19 @@ describe JSONAPI::Serializable::Renderer, '#render' do
   end
 
   it 'renders a success document' do
-    hash = subject.render(user)
+    hash = subject.render(user, class: { User: 'SerializableUser' })
 
     expect(hash[:data][:type]).to eq(:users)
   end
 
   it 'renders a success document with included resources' do
     hash = subject.render(
-      user, include: [:posts]
+      user, include: [:posts],
+      class: { User: 'SerializableUser', Post: 'SerializablePost' }
     )
 
     expect(hash[:data][:type]).to eq(:users)
     expect(hash[:included][0][:type]).to eq(:posts)
-  end
-
-  it 'finds a namespaced serializer' do
-    hash = subject.render(
-      user, include: [:posts], namespace: 'API'
-    )
-
-    expect(hash[:data][:type]).to eq(:api_users)
-    expect(hash[:included][0][:type]).to eq(:api_posts)
   end
 
   context 'when providing a custom explicit inferrer' do
@@ -36,7 +28,7 @@ describe JSONAPI::Serializable::Renderer, '#render' do
         User: 'API::SerializableUser',
         Post: 'API::SerializablePost'
       }
-      hash = subject.render(user, include: [:posts], inferrer: inferrer)
+      hash = subject.render(user, include: [:posts], class: inferrer)
 
       expect(hash[:data][:type]).to eq(:api_users)
       expect(hash[:included][0][:type]).to eq(:api_posts)
@@ -46,18 +38,7 @@ describe JSONAPI::Serializable::Renderer, '#render' do
   context 'when providing a custom implicit inferrer' do
     it 'uses the inferred serializable classes' do
       inferrer = Hash.new { |h, k| h[k] = "API::Serializable#{k}" }
-      hash = subject.render(user, include: [:posts], inferrer: inferrer)
-
-      expect(hash[:data][:type]).to eq(:api_users)
-      expect(hash[:included][0][:type]).to eq(:api_posts)
-    end
-  end
-
-  context 'when providing a custom inferrer and a namespace' do
-    it 'uses the inferred serializable classes' do
-      inferrer = Hash.new { |h, k| h[k] = "Serializable#{k}" }
-      hash = subject.render(user, include: [:posts],
-                            inferrer: inferrer, namespace: 'API')
+      hash = subject.render(user, include: [:posts], class: inferrer)
 
       expect(hash[:data][:type]).to eq(:api_users)
       expect(hash[:included][0][:type]).to eq(:api_posts)
