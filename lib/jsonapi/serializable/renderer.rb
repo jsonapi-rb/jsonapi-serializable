@@ -22,7 +22,7 @@ module JSONAPI
       #   # => { data: nil }
       #
       # @example
-      #   renderer.render(user, class: { User: 'SerializableUser' })
+      #   renderer.render(user, class: { User: SerializableUser })
       #   # => {
       #          data: {
       #            type: 'users',
@@ -33,7 +33,7 @@ module JSONAPI
       #        }
       #
       # @example
-      #   renderer.render([user1, user2], class: { User: 'SerializableUser' })
+      #   renderer.render([user1, user2], class: { User: SerializableUser })
       #   # => { data: [{ type: 'users', id: 'foo', ... }, ...] }
       def render(resources, options = {})
         options   = options.dup
