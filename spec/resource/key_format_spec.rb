@@ -24,8 +24,8 @@ describe JSONAPI::Serializable::Resource do
         key_format ->(k) { k.to_s.capitalize }
         attribute :name
         attribute :address
-        relationship :posts, class: SerializablePost
-        belongs_to :author, class: SerializableUser
+        relationship :posts
+        belongs_to :author
         has_many :comments
         has_one :review
       end
