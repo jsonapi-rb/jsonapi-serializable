@@ -77,6 +77,12 @@ module JSONAPI
           .each_with_object({}) { |(k, v), h| h[k] = v.related_resources }
       end
 
+      def jsonapi_cache_key(options)
+        "#{jsonapi_type} - #{jsonapi_id}" \
+        "- #{options[:include].to_a.sort}" \
+        "- #{(options[:fields] || Set.new).to_a.sort}"
+      end
+
       private
 
       # @api private
