@@ -5,6 +5,7 @@ require 'jsonapi/serializable/relationship'
 
 require 'jsonapi/serializable/resource/conditional_fields'
 require 'jsonapi/serializable/resource/key_format'
+require 'jsonapi/serializable/resource/caching'
 
 module JSONAPI
   module Serializable
@@ -40,10 +41,14 @@ module JSONAPI
       end
       # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+      def _attribute_value(_key, &block)
+        instance_eval(&block)
+      end
+
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def as_jsonapi(fields: nil, include: [])
         attrs = requested_attributes(fields).each_with_object({}) do |(k, v), h|
-          h[k] = instance_eval(&v)
+          h[k] = _attribute_value(k, &v)
         end
         rels = requested_relationships(fields)
                .each_with_object({}) do |(k, v), h|
