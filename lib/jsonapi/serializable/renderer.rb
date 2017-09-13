@@ -41,7 +41,8 @@ module JSONAPI
         exposures = options.delete(:expose) || {}
         exposures = exposures.merge(_class: klass)
 
-        resources = ResourceBuilder.build(resources, exposures, klass)
+        resources =
+          JSONAPI::Serializable.resources_for(resources, exposures, klass)
 
         @renderer.render(options.merge(data: resources))
       end
@@ -65,7 +66,8 @@ module JSONAPI
         klass     = options.delete(:class) || {}
         exposures = options.delete(:expose) || {}
 
-        errors = ResourceBuilder.build(errors, exposures, klass)
+        errors =
+          JSONAPI::Serializable.resources_for(errors, exposures, klass)
 
         @renderer.render(options.merge(errors: errors))
       end

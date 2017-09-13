@@ -14,7 +14,7 @@ module JSONAPI
           # NOTE(beauby): Lazify computation since it is only needed when
           #   the corresponding relationship is included.
           @_resources_block = proc do
-            ResourceBuilder.build(yield, @_exposures, @_class)
+            JSONAPI::Serializable.resources_for(yield, @_exposures, @_class)
           end
         end
 
