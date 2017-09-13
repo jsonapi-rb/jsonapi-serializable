@@ -85,16 +85,9 @@ module JSONAPI
 
       # @api private
       def _build(object, exposures, klass)
-        class_name = object.class.name.to_sym
-        serializable_class = klass[class_name] || (
-          raise UndefinedSerializableClass,
-                "No serializable class defined for #{class_name}"
-        )
-        serializable_class.new(exposures.merge(object: object))
+        JSONAPI::Serializable.class_for(object, klass)
+                             .new(exposures.merge(object: object))
       end
     end
-
-    # Error raised when there's no serializable class defined for resource.
-    class UndefinedSerializableClass < StandardError; end
   end
 end

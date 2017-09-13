@@ -19,12 +19,12 @@ module JSONAPI
               nil
             elsif resources.respond_to?(:to_ary)
               Array(resources).map do |obj|
-                @_class[obj.class.name.to_sym]
-                  .new(@_exposures.merge(object: obj))
+                JSONAPI::Serializable.class_for(obj, @_class)
+                                     .new(@_exposures.merge(object: obj))
               end
             else
-              @_class[resources.class.name.to_sym]
-                .new(@_exposures.merge(object: resources))
+              JSONAPI::Serializable.class_for(resources, @_class)
+                                   .new(@_exposures.merge(object: resources))
             end
           end
         end
