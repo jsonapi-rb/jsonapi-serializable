@@ -1,41 +1,33 @@
 module JSONAPI
   module Serializable
-    class ResourceBuilder
-      # @api private
-      def self.build(objects, options, inferrer)
-        new(inferrer).build(objects, options)
-      end
+    module ResourceBuilder
+      class << self
+        # @api private
+        def build(objects, options, inferrer)
+          return if objects.nil?
 
-      # @api private
-      def initialize(inferrer)
-        @inferrer = inferrer
-
-        freeze
-      end
-
-      # @api private
-      def build(objects, options)
-        return if objects.nil?
-
-        if objects.respond_to?(:to_ary)
-          Array(objects).map { |object| build_resource(object, options) }
-        else
-          build_resource(objects, options)
+          if objects.respond_to?(:to_ary)
+            Array(objects).map do |object|
+              build_resource(object, options, inferrer)
+            end
+          else
+            build_resource(objects, options, inferrer)
+          end
         end
-      end
 
-      private
+        private
 
-      # @api private
-      def build_resource(object, options)
-        class_name = object.class.name.to_sym
+        # @api private
+        def build_resource(object, options, inferrer)
+          class_name = object.class.name.to_sym
 
-        serializable_klass = @inferrer[class_name] || (
-          raise UndefinedSerializableClass,
-                "No serializable class defined for #{class_name}"
-        )
+          serializable_klass = inferrer[class_name] || (
+            raise UndefinedSerializableClass,
+                  "No serializable class defined for #{class_name}"
+          )
 
-        serializable_klass.new(options.merge(object: object))
+          serializable_klass.new(options.merge(object: object))
+        end
       end
     end
 
