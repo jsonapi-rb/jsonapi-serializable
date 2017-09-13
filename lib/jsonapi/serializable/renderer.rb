@@ -41,7 +41,7 @@ module JSONAPI
         exposures = options.delete(:expose) || {}
         exposures = exposures.merge(_class: klass)
 
-        resources = build_resources(resources, exposures, klass)
+        resources = ResourceBuilder.build(resources, exposures, klass)
 
         @renderer.render(options.merge(data: resources))
       end
@@ -65,28 +65,9 @@ module JSONAPI
         klass     = options.delete(:class) || {}
         exposures = options.delete(:expose) || {}
 
-        errors = errors.map { |e| _build(e, exposures, klass) }
+        errors = ResourceBuilder.build(errors, exposures, klass)
 
         @renderer.render(options.merge(errors: errors))
-      end
-
-      private
-
-      # @api private
-      def build_resources(resources, exposures, klass)
-        if resources.nil?
-          nil
-        elsif resources.respond_to?(:to_ary)
-          Array(resources).map { |obj| _build(obj, exposures, klass) }
-        else
-          _build(resources, exposures, klass)
-        end
-      end
-
-      # @api private
-      def _build(object, exposures, klass)
-        JSONAPI::Serializable.class_for(object, klass)
-                             .new(exposures.merge(object: object))
       end
     end
   end

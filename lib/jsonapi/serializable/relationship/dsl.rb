@@ -14,18 +14,7 @@ module JSONAPI
           # NOTE(beauby): Lazify computation since it is only needed when
           #   the corresponding relationship is included.
           @_resources_block = proc do
-            resources = yield
-            if resources.nil?
-              nil
-            elsif resources.respond_to?(:to_ary)
-              Array(resources).map do |obj|
-                JSONAPI::Serializable.class_for(obj, @_class)
-                                     .new(@_exposures.merge(object: obj))
-              end
-            else
-              JSONAPI::Serializable.class_for(resources, @_class)
-                                   .new(@_exposures.merge(object: resources))
-            end
+            ResourceBuilder.build(yield, @_exposures, @_class)
           end
         end
 
