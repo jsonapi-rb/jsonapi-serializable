@@ -1,0 +1,13 @@
+#!/bin/sh
+
+branch=`git rev-parse --abbrev-ref HEAD`
+
+git stash -q
+
+ruby $1
+
+git checkout master -q
+ruby $1
+
+git checkout $branch -q
+git stash pop -q
