@@ -7,7 +7,7 @@ describe JSONAPI::Serializable::Resource, '.attributes' do
       attributes :name, :address
     end
     user = User.new(name: 'foo', address: 'bar')
-    resource = klass.new(object: user)
+    resource = klass.new(user)
     actual = resource.as_jsonapi[:attributes]
     expected = {
       name: 'foo',

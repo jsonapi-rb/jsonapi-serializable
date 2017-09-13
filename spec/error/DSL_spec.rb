@@ -5,7 +5,7 @@ describe JSONAPI::Serializable::Error, '.id' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       id 'foo'
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:id]
     expected = 'foo'
 
@@ -18,7 +18,7 @@ describe JSONAPI::Serializable::Error, '.id' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       id { 'foo' }
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:id]
     expected = 'foo'
 
@@ -31,7 +31,7 @@ describe JSONAPI::Serializable::Error, '.status' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       status 'foo'
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:status]
     expected = 'foo'
 
@@ -44,7 +44,7 @@ describe JSONAPI::Serializable::Error, '.status' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       status { 'foo' }
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:status]
     expected = 'foo'
 
@@ -57,7 +57,7 @@ describe JSONAPI::Serializable::Error, '.code' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       code 'foo'
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:code]
     expected = 'foo'
 
@@ -70,7 +70,7 @@ describe JSONAPI::Serializable::Error, '.code' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       code { 'foo' }
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:code]
     expected = 'foo'
 
@@ -83,7 +83,7 @@ describe JSONAPI::Serializable::Error, '.title' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       title 'foo'
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:title]
     expected = 'foo'
 
@@ -96,7 +96,7 @@ describe JSONAPI::Serializable::Error, '.title' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       title { 'foo' }
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:title]
     expected = 'foo'
 
@@ -109,7 +109,7 @@ describe JSONAPI::Serializable::Error, '.detail' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       detail 'foo'
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:detail]
     expected = 'foo'
 
@@ -122,7 +122,7 @@ describe JSONAPI::Serializable::Error, '.detail' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       detail { 'foo' }
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:detail]
     expected = 'foo'
 
@@ -135,7 +135,7 @@ describe JSONAPI::Serializable::Error, '.meta' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       meta 'foo'
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:meta]
     expected = 'foo'
 
@@ -148,7 +148,7 @@ describe JSONAPI::Serializable::Error, '.meta' do
     klass = Class.new(JSONAPI::Serializable::Error) do
       meta { 'foo' }
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:meta]
     expected = 'foo'
 
@@ -164,7 +164,7 @@ describe JSONAPI::Serializable::Error, '.links' do
         meta foo: 'bar'
       end
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:links][:about]
     expected = { href: 'foo://bar', meta: { foo: 'bar' } }
 
@@ -180,7 +180,7 @@ describe JSONAPI::Serializable::Error, '.source' do
         parameter 'bar'
       end
     end
-    error = klass.new
+    error = klass.new(nil)
     actual = error.as_jsonapi[:source]
     expected = { pointer: 'foo', parameter: 'bar' }
 

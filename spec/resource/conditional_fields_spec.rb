@@ -10,7 +10,7 @@ describe JSONAPI::Serializable::Resource do
 
   let(:object) { User.new }
   let(:resource) do
-    klass.new(object: object, conditional: conditional)
+    klass.new(object, conditional: conditional)
   end
 
   context 'when the attribute is conditional' do
@@ -121,7 +121,7 @@ describe JSONAPI::Serializable::Resource do
     end
 
     let(:subclass) { Class.new(klass) }
-    let(:resource) { subclass.new(object: object) }
+    let(:resource) { subclass.new(object) }
 
     subject { resource.as_jsonapi[:relationships] }
 

@@ -10,7 +10,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
   end
 
   it 'includes all fields by default' do
-    resource = SerializableUser.new(object: user)
+    resource = SerializableUser.new(user)
     actual = resource.as_jsonapi
     expected = {
       type: :users,
@@ -30,7 +30,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
   end
 
   it 'omits attributes member if none rendered' do
-    resource = SerializableUser.new(object: user)
+    resource = SerializableUser.new(user)
     actual = resource.as_jsonapi(fields: [:posts])
     expected = {
       type: :users,
@@ -46,7 +46,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
   end
 
   it 'omits relationships member if none rendered' do
-    resource = SerializableUser.new(object: user)
+    resource = SerializableUser.new(user)
     actual = resource.as_jsonapi(fields: [:name, :address])
     expected = {
       type: :users,
@@ -61,7 +61,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
   end
 
   it 'filters out fields' do
-    resource = SerializableUser.new(object: user)
+    resource = SerializableUser.new(user)
     actual = resource.as_jsonapi(fields: [:name])
     expected = {
       type: :users,
@@ -85,7 +85,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(user)
     actual = resource.as_jsonapi
     expected = {
       type: :users,
@@ -112,7 +112,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(user)
     actual = resource.as_jsonapi
     expected = {
       type: :users,
@@ -135,7 +135,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       relationship :posts
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(user)
     actual = resource.as_jsonapi
     expected = {
       type: :users,
@@ -162,7 +162,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       end
     end
 
-    resource = klass.new(object: user)
+    resource = klass.new(user)
     actual = resource.as_jsonapi(include: [:posts])
     expected = {
       type: :users,
@@ -189,7 +189,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       end
     end
 
-    resource = klass.new(object: user, _class: inferrer)
+    resource = klass.new(user, _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts])
     expected = {
       type: :users,
@@ -215,7 +215,7 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
         data { nil }
       end
     end
-    resource = klass.new(object: user, _class: inferrer)
+    resource = klass.new(user, _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts], fields: [:posts])
     expected = {
       type: :users,

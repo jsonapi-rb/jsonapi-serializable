@@ -15,7 +15,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
       end
     end
 
-    resource = klass.new(object: user, _class: inferrer)
+    resource = klass.new(user, _class: inferrer)
     actual = resource.as_jsonapi[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '1' },
@@ -35,7 +35,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
       end
     end
 
-    resource = klass.new(object: user, _class: inferrer)
+    resource = klass.new(user, _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: '5' }]
@@ -54,7 +54,7 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
       end
     end
 
-    resource = klass.new(object: user, _class: inferrer)
+    resource = klass.new(user, _class: inferrer)
     actual = resource.as_jsonapi[:relationships][:posts]
     expected = { meta: { included: false } }
 

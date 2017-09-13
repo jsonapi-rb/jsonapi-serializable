@@ -9,13 +9,13 @@ describe JSONAPI::Serializable::Resource do
   end
 
   let(:object)   { User.new }
-  let(:resource) { klass.new(object: object) }
+  let(:resource) { klass.new(object) }
 
   subject { resource.as_jsonapi }
 
   context 'when keys are formatted' do
     let(:resource) do
-      klass.new(object: object)
+      klass.new(object)
     end
 
     before do
@@ -55,7 +55,7 @@ describe JSONAPI::Serializable::Resource do
 
     context 'when inheriting' do
       let(:subclass) { Class.new(klass) }
-      let(:resource) { subclass.new(object: object) }
+      let(:resource) { subclass.new(object) }
 
       it { is_expected.to eq(expected) }
     end

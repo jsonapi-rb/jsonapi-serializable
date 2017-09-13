@@ -9,7 +9,7 @@ describe JSONAPI::Serializable::Resource do
       type 'users'
       id { @foo }
     end
-    resource = klass.new(object: user, foo: 'bar')
+    resource = klass.new(user, foo: 'bar')
     actual = resource.as_jsonapi[:id]
     expected = 'bar'
 
@@ -23,7 +23,7 @@ describe JSONAPI::Serializable::Resource do
         { foo: @foo }
       end
     end
-    resource = klass.new(object: user, foo: 'bar')
+    resource = klass.new(user, foo: 'bar')
     actual = resource.as_jsonapi[:meta]
     expected = { foo: 'bar' }
 
@@ -35,7 +35,7 @@ describe JSONAPI::Serializable::Resource do
       type 'users'
       link(:self) { @foo }
     end
-    resource = klass.new(object: user, foo: 'bar')
+    resource = klass.new(user, foo: 'bar')
     actual = resource.as_jsonapi[:links][:self]
     expected = 'bar'
 
@@ -49,7 +49,7 @@ describe JSONAPI::Serializable::Resource do
         @foo
       end
     end
-    resource = klass.new(object: user, foo: 'bar')
+    resource = klass.new(user, foo: 'bar')
     actual = resource.as_jsonapi[:attributes]
     expected = {
       foo: 'bar'
@@ -75,7 +75,7 @@ describe JSONAPI::Serializable::Resource do
       end
     end
     posts = [Post.new(id: 1), Post.new(id: 2)]
-    resource = klass.new(object: user, foo: 'bar', posts: posts)
+    resource = klass.new(user, foo: 'bar', posts: posts)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [
@@ -104,7 +104,7 @@ describe JSONAPI::Serializable::Resource do
       Post: post_klass,
       User: klass
     }
-    resource = klass.new(object: user, foo: 'bar', _class: inferrer)
+    resource = klass.new(user, foo: 'bar', _class: inferrer)
     actual = resource.as_jsonapi(include: [:posts])[:relationships][:posts]
     expected = {
       data: [{ type: :posts, id: 'bar' }, { type: :posts, id: 'bar' }]

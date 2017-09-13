@@ -86,7 +86,7 @@ module JSONAPI
         #      meta authorization_needed: true
         #    end
         def link(name, &block)
-          @_links[name] = Link.as_jsonapi(@_exposures, &block)
+          @_links[name] = Link.as_jsonapi(@object, @_exposures, &block)
         end
       end
     end

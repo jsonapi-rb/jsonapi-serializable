@@ -1,11 +1,12 @@
 module JSONAPI
   module Serializable
     class Link
-      def self.as_jsonapi(exposures = {}, &block)
-        new(exposures, &block).as_jsonapi
+      def self.as_jsonapi(object, exposures = {}, &block)
+        new(object, exposures, &block).as_jsonapi
       end
 
-      def initialize(exposures = {}, &block)
+      def initialize(object, exposures = {}, &block)
+        @object = object
         exposures.each { |k, v| instance_variable_set("@#{k}", v) }
         static_value = instance_eval(&block)
         @_href = static_value if static_value.is_a?(String)

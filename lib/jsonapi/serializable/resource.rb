@@ -51,7 +51,7 @@ module JSONAPI
           h[k] = v.as_jsonapi(include.include?(k))
         end
         links = link_blocks.each_with_object({}) do |(k, v), h|
-          h[k] = Link.as_jsonapi(@_exposures, &v)
+          h[k] = Link.as_jsonapi(@object, @_exposures, &v)
         end
         {}.tap do |hash|
           hash[:id]   = @_id

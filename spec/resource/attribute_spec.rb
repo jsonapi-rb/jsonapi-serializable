@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe JSONAPI::Serializable::Resource, '.attribute' do
   let(:object)   { User.new(name: 'foo') }
-  let(:resource) { klass.new(object: object) }
+  let(:resource) { klass.new(object) }
 
   subject { resource.as_jsonapi[:attributes] }
 
@@ -63,12 +63,12 @@ describe JSONAPI::Serializable::Resource, '.attribute' do
     end
 
     it 'overrides superclass definition' do
-      expect(subclass.new(object: object).as_jsonapi[:attributes])
+      expect(subclass.new(object).as_jsonapi[:attributes])
         .to eq(name: 'bar')
     end
 
     it 'does not modify superclass definition' do
-      expect(klass.new(object: object).as_jsonapi[:attributes])
+      expect(klass.new(object).as_jsonapi[:attributes])
         .to eq(name: 'foo')
     end
   end

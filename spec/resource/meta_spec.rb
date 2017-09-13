@@ -6,7 +6,7 @@ describe JSONAPI::Serializable::Resource, '.meta' do
       type 'foo'
       meta foo: 'bar'
     end
-    resource = klass.new(object: User.new)
+    resource = klass.new(User.new)
     actual = resource.as_jsonapi[:meta]
     expected = {
       foo: 'bar'
@@ -22,7 +22,7 @@ describe JSONAPI::Serializable::Resource, '.meta' do
         { foo: 'bar' }
       end
     end
-    resource = klass.new(object: User.new)
+    resource = klass.new(User.new)
     actual = resource.as_jsonapi[:meta]
     expected = {
       foo: 'bar'

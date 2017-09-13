@@ -42,7 +42,8 @@ module JSONAPI
         klass.link_blocks = link_blocks.dup
       end
 
-      def initialize(exposures = {})
+      def initialize(object, exposures = {})
+        @object = object
         @_exposures = exposures
         exposures.each { |k, v| instance_variable_set("@#{k}", v) }
       end

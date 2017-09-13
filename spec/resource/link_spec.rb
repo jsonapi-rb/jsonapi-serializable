@@ -13,7 +13,7 @@ describe JSONAPI::Serializable::Resource, '.link' do
       end
     end
     user = User.new(id: 'foo')
-    resource = klass.new(object: user)
+    resource = klass.new(user)
     actual = resource.as_jsonapi[:links]
     expected = {
       self: 'http://api.example.com/users/foo',

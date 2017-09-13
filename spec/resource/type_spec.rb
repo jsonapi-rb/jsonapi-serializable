@@ -5,7 +5,7 @@ describe JSONAPI::Serializable::Resource, '.type' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type :foo
     end
-    resource = klass.new(object: User.new)
+    resource = klass.new(User.new)
 
     expect(resource.jsonapi_type).to eq(:foo)
   end
@@ -14,7 +14,7 @@ describe JSONAPI::Serializable::Resource, '.type' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'foo'
     end
-    resource = klass.new(object: User.new)
+    resource = klass.new(User.new)
 
     expect(resource.jsonapi_type).to eq(:foo)
   end
@@ -23,14 +23,14 @@ describe JSONAPI::Serializable::Resource, '.type' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type { 'foo' }
     end
-    resource = klass.new(object: User.new)
+    resource = klass.new(User.new)
 
     expect(resource.jsonapi_type).to eq(:foo)
   end
 
   it 'defaults to :unknown' do
     klass = Class.new(JSONAPI::Serializable::Resource)
-    resource = klass.new(object: User.new)
+    resource = klass.new(User.new)
 
     expect(resource.jsonapi_type).to eq(:unknown)
   end

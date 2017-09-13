@@ -6,7 +6,7 @@ describe JSONAPI::Serializable::Resource, '.id' do
       type 'foo'
       id { 'foo' }
     end
-    resource = klass.new(object: User.new)
+    resource = klass.new(User.new)
 
     expect(resource.jsonapi_id).to eq('foo')
   end
@@ -16,7 +16,7 @@ describe JSONAPI::Serializable::Resource, '.id' do
       type 'foo'
     end
     user = User.new(id: 'foo')
-    resource = klass.new(object: user)
+    resource = klass.new(user)
 
     expect(resource.jsonapi_id).to eq('foo')
   end

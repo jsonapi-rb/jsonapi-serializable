@@ -10,7 +10,7 @@ describe JSONAPI::Serializable::Resource, '#jsonapi_related' do
   end
 
   it 'returns included resources' do
-    resource = SerializableUser.new(object: user,
+    resource = SerializableUser.new(user,
                                     _class: inferrer)
     related = resource.jsonapi_related([:posts])
 
@@ -19,7 +19,7 @@ describe JSONAPI::Serializable::Resource, '#jsonapi_related' do
   end
 
   it 'omits non-included relationships' do
-    resource = SerializableUser.new(object: user,
+    resource = SerializableUser.new(user,
                                     _class: inferrer)
     related = resource.jsonapi_related([])
 
@@ -28,7 +28,7 @@ describe JSONAPI::Serializable::Resource, '#jsonapi_related' do
 
   it 'returns an array for to-one relationships' do
     user = User.new(posts: Post.new(id: 1))
-    resource = SerializableUser.new(object: user,
+    resource = SerializableUser.new(user,
                                     _class: inferrer)
     related = resource.jsonapi_related([:posts])
 
@@ -37,7 +37,7 @@ describe JSONAPI::Serializable::Resource, '#jsonapi_related' do
 
   it 'returns an empty array for nil relationships' do
     user = User.new(posts: nil)
-    resource = SerializableUser.new(object: user,
+    resource = SerializableUser.new(user,
                                     _class: inferrer)
     related = resource.jsonapi_related([:posts])
 
