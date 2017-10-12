@@ -32,8 +32,8 @@ module JSONAPI
         #
         #   @example
         #     linkage always: true
-        def linkage(always: false, &block)
-          @_include_linkage = always
+        def linkage(options = {}, &block)
+          @_include_linkage = options.fetch(:always, false)
           @_linkage_block = block
         end
 

@@ -66,5 +66,5 @@ describe JSONAPI::Serializable::Resource do
       expect { klass.prepend JSONAPI::Serializable::Resource::KeyFormat }
         .to output(/DERPRECATION WARNING/).to_stderr
     end
-  end
+  end if Class.respond_to?(:prepend)
 end
