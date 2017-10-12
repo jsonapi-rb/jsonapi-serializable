@@ -41,13 +41,14 @@ module JSONAPI
       # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      def as_jsonapi(fields: nil, include: [])
+      def as_jsonapi(options = {})
+        fields = options.fetch(:fields, nil)
         attrs = requested_attributes(fields).each_with_object({}) do |(k, v), h|
           h[k] = instance_eval(&v)
         end
         rels = requested_relationships(fields)
                .each_with_object({}) do |(k, v), h|
-          h[k] = v.as_jsonapi(include.include?(k))
+          h[k] = v.as_jsonapi(options.fetch(:include, []).include?(k))
         end
         links = link_blocks.each_with_object({}) do |(k, v), h|
           h[k] = Link.as_jsonapi(@_exposures, &v)

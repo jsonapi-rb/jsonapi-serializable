@@ -38,7 +38,7 @@ describe JSONAPI::Serializable::Renderer, '#render' do
   context 'when providing a custom implicit inferrer' do
     it 'uses the inferred serializable classes' do
       inferrer = Hash.new do |h, k|
-        h[k] = Object.const_get("API::Serializable#{k}")
+        h[k] = API.const_get("Serializable#{k}")
       end
       hash = subject.render(user, include: [:posts], class: inferrer)
 
