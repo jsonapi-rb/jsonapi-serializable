@@ -65,7 +65,7 @@ module JSONAPI
       end
 
       def source
-        return @_source if @_source
+        return @_source if defined?(@_source) && @_source
         return if self.class.source_block.nil?
         @_source = ErrorSource.as_jsonapi(@_exposures,
                                           &self.class.source_block)
