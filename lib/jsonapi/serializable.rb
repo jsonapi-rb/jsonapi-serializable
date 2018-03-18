@@ -20,9 +20,18 @@ module JSONAPI
       end
     end
 
+    def self.demodulize(path)
+      path = path.to_s
+      if i = path.rindex("::")
+        path[(i + 2)..-1]
+      else
+        path
+      end
+    end
+
     # @api private
     def self.resource_for(object, options, inferrer)
-      class_name = object.class.name.to_sym
+      class_name = demodulize(object.class.name).to_sym
 
       serializable_klass = inferrer[class_name] || (
         raise UndefinedSerializableClass,
