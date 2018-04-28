@@ -52,8 +52,10 @@ module JSONAPI
         #     meta do
         #       { paginated: true }
         #     end
-        def meta(value = nil)
-          @_meta = value || yield
+        def meta(value = nil, &block)
+          @_meta_value = value
+          # NOTE: Lazify computation since it might make decisions based on included? or eager loading
+          @_meta_block = block unless value
         end
 
         # Declare a link for this relationship. The properties of the link are set
