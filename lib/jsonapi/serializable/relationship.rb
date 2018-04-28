@@ -15,12 +15,17 @@ module JSONAPI
       end
 
       def as_jsonapi(included)
+        @_included = included
         {}.tap do |hash|
           hash[:links] = @_links           if @_links.any?
           hash[:data]  = linkage_data      if included || @_include_linkage
-          hash[:meta]  = @_meta            unless @_meta.nil?
+          hash[:meta]  = meta_data         unless (@_meta_value.nil? && @_meta_block.nil?)
           hash[:meta]  = { included: false } if hash.empty?
         end
+      end
+
+      def included?
+        @_included
       end
 
       # @api private
@@ -44,6 +49,11 @@ module JSONAPI
         end
 
         resources.respond_to?(:each) ? linkage_data : linkage_data.first
+      end
+
+      # @api private
+      def meta_data
+        @_meta_value || @_meta_block&.call
       end
     end
   end
