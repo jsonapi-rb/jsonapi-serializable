@@ -45,21 +45,6 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
     expect(actual).to eq(expected)
   end
 
-  it 'omits relationships member if none rendered' do
-    resource = SerializableUser.new(object: user)
-    actual = resource.as_jsonapi(fields: [:name, :address])
-    expected = {
-      type: :users,
-      id: 'foo',
-      attributes: {
-        name: 'Lucas',
-        address: '22 Ruby drive'
-      }
-    }
-
-    expect(actual).to eq(expected)
-  end
-
   it 'filters out fields' do
     resource = SerializableUser.new(object: user)
     actual = resource.as_jsonapi(fields: [:name])
@@ -68,7 +53,8 @@ describe JSONAPI::Serializable::Resource, '#as_jsonapi' do
       id: 'foo',
       attributes: {
         name: 'Lucas'
-      }
+      },
+      relationships: { posts: { meta: { included: false } } }
     }
 
     expect(actual).to eq(expected)

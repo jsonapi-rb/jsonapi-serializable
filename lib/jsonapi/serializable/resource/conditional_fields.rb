@@ -98,7 +98,7 @@ module JSONAPI
         end
 
         # @api private
-        def requested_relationships(fields)
+        def requested_relationships
           super.select do |k, _|
             _conditionally_included?(self.class.field_condition_blocks, k)
           end

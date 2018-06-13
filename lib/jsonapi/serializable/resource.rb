@@ -45,8 +45,7 @@ module JSONAPI
         attrs = requested_attributes(fields).each_with_object({}) do |(k, v), h|
           h[k] = instance_eval(&v)
         end
-        rels = requested_relationships(fields)
-               .each_with_object({}) do |(k, v), h|
+        rels = requested_relationships.each_with_object({}) do |(k, v), h|
           h[k] = v.as_jsonapi(include.include?(k))
         end
         links = link_blocks.each_with_object({}) do |(k, v), h|
@@ -91,9 +90,10 @@ module JSONAPI
             .select { |k, _| fields.nil? || fields.include?(k) }
       end
 
+      # Note: overridden in conditional_fields.rb
       # @api private
-      def requested_relationships(fields)
-        @_relationships.select { |k, _| fields.nil? || fields.include?(k) }
+      def requested_relationships
+        @_relationships
       end
 
       # @api private
