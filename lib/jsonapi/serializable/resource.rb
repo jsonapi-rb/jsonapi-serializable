@@ -11,15 +11,12 @@ module JSONAPI
     class Resource
       extend DSL
 
-      # Default the value of id.
-      id { @object.public_send(:id).to_s }
-
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def initialize(exposures = {})
         @_exposures = exposures
         @_exposures.each { |k, v| instance_variable_set("@#{k}", v) }
 
-        @_id = instance_eval(&self.class.id_block).to_s
+        @_id   = object_id
         @_type = if (b = self.class.type_block)
                    instance_eval(&b).to_sym
                  else
@@ -53,7 +50,7 @@ module JSONAPI
           h[k] = Link.as_jsonapi(@_exposures, &v)
         end
         {}.tap do |hash|
-          hash[:id]   = @_id
+          hash[object_id_name] = @_id unless self.class.id_val == false
           hash[:type] = @_type
           hash[:attributes]    = attrs if attrs.any?
           hash[:relationships] = rels  if rels.any?
@@ -94,6 +91,22 @@ module JSONAPI
       # @api private
       def requested_relationships(fields)
         @_relationships.select { |k, _| fields.nil? || fields.include?(k) }
+      end
+
+      # @api private
+      def object_id_name
+        self.class.id_name ? self.class.id_name : :id
+      end
+
+      # @api private
+      def default_object_id
+        @object.public_send(object_id_name).to_s
+      end
+
+      # @api private
+      def object_id
+        return instance_eval(&self.class.id_block) if self.class.id_block
+        default_object_id
       end
 
       # @api private
