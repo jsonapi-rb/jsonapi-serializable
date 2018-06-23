@@ -4,8 +4,8 @@ module JSONAPI
       module DSL
         def self.extended(klass)
           class << klass
-            attr_accessor :id_block, :type_val, :type_block, :attribute_blocks,
-                          :relationship_blocks, :relationship_options,
+            attr_accessor :id_name, :id_val, :id_block, :type_val, :type_block,
+                          :attribute_blocks, :relationship_blocks, :relationship_options,
                           :link_blocks, :meta_val, :meta_block
           end
 
@@ -17,6 +17,8 @@ module JSONAPI
 
         # rubocop:disable Metrics/AbcSize
         def inherited(klass)
+          klass.id_name    = id_name
+          klass.id_val     = id_val
           klass.id_block   = id_block
           klass.type_val   = type_val
           klass.type_block = type_block
@@ -29,13 +31,23 @@ module JSONAPI
         end
         # rubocop:enable Metrics/AbcSize
 
-        # Declare the JSON API id of this resource.
+        # @overload id(value)
+        #   Declare whether to show JSON API id of this resource.
+        #   @param [Boolean] value The flag whether to show id.
         #
-        # @yieldreturn [String] The id of the resource.
+        #   @example
+        #     id false
         #
-        # @example
-        #   id { @object.id.to_s }
-        def id(&block)
+        # @overload id(&block)
+        #   Declare the JSON API id of this resource
+        #
+        #   @yieldreturn [String] The id of the resource.
+        #
+        #   @example
+        #     id { @object.id.to_s }
+        def id(value = true, name: :id, &block)
+          self.id_val   = value
+          self.id_name  = name
           self.id_block = block
         end
 
