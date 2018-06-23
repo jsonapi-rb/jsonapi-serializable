@@ -14,7 +14,7 @@ class Model
 end
 
 class User < Model
-  attr_accessor :id, :name, :address, :posts
+  attr_accessor :id, :uuid, :name, :address, :posts
 end
 
 class Post < Model
