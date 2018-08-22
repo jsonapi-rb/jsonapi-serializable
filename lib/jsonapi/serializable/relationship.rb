@@ -6,12 +6,12 @@ module JSONAPI
     class Relationship
       include DSL
 
-      def initialize(exposures = {}, options = {}, &block)
+      def initialize(exposures = {}, options = {}, block)
         exposures.each { |k, v| instance_variable_set("@#{k}", v) }
         @_exposures = exposures
         @_options   = options
         @_links     = {}
-        instance_eval(&block)
+        @block      = block
       end
 
       def as_jsonapi(included)
@@ -25,10 +25,15 @@ module JSONAPI
 
       # @api private
       def related_resources
+        run_block
         @_related_resources ||= Array(resources)
       end
 
       private
+
+      def run_block
+        @run_block ||= instance_eval(&@block).nil?
+      end
 
       # @api private
       def resources
