@@ -28,7 +28,7 @@ module JSONAPI
         @_relationships = self.class.relationship_blocks
                               .each_with_object({}) do |(k, v), h|
           opts = self.class.relationship_options[k] || {}
-          h[k] = Relationship.new(@_exposures, opts, &v)
+          h[k] = Relationship.new(@_exposures, opts, v)
         end
         @_meta = if (b = self.class.meta_block)
                    instance_eval(&b)
@@ -45,6 +45,7 @@ module JSONAPI
         attrs = requested_attributes(fields).each_with_object({}) do |(k, v), h|
           h[k] = instance_eval(&v)
         end
+
         rels = requested_relationships(fields)
                .each_with_object({}) do |(k, v), h|
           h[k] = v.as_jsonapi(include.include?(k))
