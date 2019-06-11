@@ -32,4 +32,18 @@ describe JSONAPI::Serializable::Renderer, '#render_relationship' do
 
     expect(hash).to eq(expected)
   end
+
+  it 'can interigate included? in the meta block' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+
+      has_many(:posts) do
+        meta do
+          included?
+        end
+      end
+    end
+    expect_any_instance_of(JSONAPI::Serializable::Relationship).to receive(:included?)
+    subject.render(user, class: { User: klass, Post: SerializablePost })
+  end
 end
