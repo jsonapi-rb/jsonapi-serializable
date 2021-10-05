@@ -33,6 +33,77 @@ describe JSONAPI::Serializable::Renderer, '#render_relationship' do
     expect(hash).to eq(expected)
   end
 
+  it 'omits the meta key from a relationship document without meta' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+
+      has_many(:posts) do
+        link(:self) { "http://api.example.com/users/#{@object.id}/relationships/posts" }
+        link(:related) { "http://api.example.com/users/#{@object.id}/posts" }
+      end
+    end
+    hash = subject.render(user,
+                          relationship: :posts,
+                          class: { User: klass, Post: SerializablePost })
+    expected = {
+      data: [{ type: :posts, id: '1' }, { type: :posts, id: '2' }],
+      links: {
+        self: "http://api.example.com/users/foo/relationships/posts",
+        related: "http://api.example.com/users/foo/posts"
+      }
+    }
+
+    expect(hash).to eq(expected)
+  end
+
+  it 'omits the meta key from a relationship document when meta is nil' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+
+      has_many(:posts) do
+        link(:self) { "http://api.example.com/users/#{@object.id}/relationships/posts" }
+        link(:related) { "http://api.example.com/users/#{@object.id}/posts" }
+        meta nil
+      end
+    end
+    hash = subject.render(user,
+                          relationship: :posts,
+                          class: { User: klass, Post: SerializablePost })
+    expected = {
+      data: [{ type: :posts, id: '1' }, { type: :posts, id: '2' }],
+      links: {
+        self: "http://api.example.com/users/foo/relationships/posts",
+        related: "http://api.example.com/users/foo/posts"
+      }
+    }
+
+    expect(hash).to eq(expected)
+  end
+
+  it 'omits the meta key from a relationship document when meta block evaluates to nil' do
+    klass = Class.new(JSONAPI::Serializable::Resource) do
+      type 'users'
+
+      has_many(:posts) do
+        link(:self) { "http://api.example.com/users/#{@object.id}/relationships/posts" }
+        link(:related) { "http://api.example.com/users/#{@object.id}/posts" }
+        meta { nil }
+      end
+    end
+    hash = subject.render(user,
+                          relationship: :posts,
+                          class: { User: klass, Post: SerializablePost })
+    expected = {
+      data: [{ type: :posts, id: '1' }, { type: :posts, id: '2' }],
+      links: {
+        self: "http://api.example.com/users/foo/relationships/posts",
+        related: "http://api.example.com/users/foo/posts"
+      }
+    }
+
+    expect(hash).to eq(expected)
+  end
+
   it 'can interigate included? in the meta block' do
     klass = Class.new(JSONAPI::Serializable::Resource) do
       type 'users'
