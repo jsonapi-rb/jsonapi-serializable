@@ -46,6 +46,7 @@ module JSONAPI
         #
         def attribute(name, options = {}, &block)
           super
+          name = _format_key_for_condition(name)
           _register_condition(field_condition_blocks, name, options)
         end
 
@@ -57,6 +58,7 @@ module JSONAPI
         #
         def relationship(name, options = {}, &block)
           super
+          name = _format_key_for_condition(name)
           _register_condition(field_condition_blocks, name, options)
         end
 
@@ -86,6 +88,15 @@ module JSONAPI
             elsif options.key?(:unless)
               proc { !instance_exec(&options[:unless]) }
             end
+        end
+
+        def _format_key_for_condition(name)
+          ancestors = self.singleton_class.included_modules
+          if ancestors.include?(KeyFormat) && ancestors.index(KeyFormat) > ancestors.index(ConditionalFields)
+            _key_formatter.call(name)
+          else
+            name
+          end
         end
       end
 
