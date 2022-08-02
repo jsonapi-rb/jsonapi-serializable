@@ -34,22 +34,7 @@ describe JSONAPI::Serializable::Resource do
     expected = {
       type: :foo,
       id: 'bar',
-      attributes: { Name: nil, Address: nil },
-      relationships: {
-        Posts: {
-          meta: { included: false }
-        },
-        Author: {
-          meta: { included: false }
-        },
-        Comments: {
-          meta: { included: false }
-        },
-        Review: {
-          meta: { included: false }
-        }
-      }
-
+      attributes: { Name: nil, Address: nil }
     }
     it { is_expected.to eq(expected) }
 

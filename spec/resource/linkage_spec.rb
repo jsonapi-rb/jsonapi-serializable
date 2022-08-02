@@ -43,21 +43,4 @@ describe JSONAPI::Serializable::Resource, '.linkage' do
 
     expect(actual).to eq(expected)
   end
-
-  it 'does not include overriden linkage unless included' do
-    klass = Class.new(JSONAPI::Serializable::Resource) do
-      type 'users'
-      relationship :posts, class: SerializablePost do
-        linkage do
-          [{ type: :posts, id: '5' }]
-        end
-      end
-    end
-
-    resource = klass.new(object: user, _class: inferrer)
-    actual = resource.as_jsonapi[:relationships][:posts]
-    expected = { meta: { included: false } }
-
-    expect(actual).to eq(expected)
-  end
 end
