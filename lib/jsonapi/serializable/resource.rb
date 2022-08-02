@@ -45,8 +45,7 @@ module JSONAPI
         attrs = requested_attributes(fields).each_with_object({}) do |(k, v), h|
           h[k] = instance_eval(&v)
         end
-        rels = requested_relationships(fields)
-               .each_with_object({}) do |(k, v), h|
+        rels = requested_relationships(include).each_with_object({}) do |(k, v), h|
           h[k] = v.as_jsonapi(include.include?(k))
         end
         links = link_blocks.each_with_object({}) do |(k, v), h|
@@ -92,8 +91,10 @@ module JSONAPI
       end
 
       # @api private
-      def requested_relationships(fields)
-        @_relationships.select { |k, _| fields.nil? || fields.include?(k) }
+      def requested_relationships(includes)
+        @_relationships.select do |k, v|
+          v.instance_variable_get('@_include_linkage') || includes.include?(k)
+        end
       end
 
       # @api private

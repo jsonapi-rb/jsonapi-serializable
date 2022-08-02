@@ -115,6 +115,6 @@ describe JSONAPI::Serializable::Renderer, '#render_relationship' do
       end
     end
     expect_any_instance_of(JSONAPI::Serializable::Relationship).to receive(:included?)
-    subject.render(user, class: { User: klass, Post: SerializablePost })
+    subject.render(user, include: [:posts], class: { User: klass, Post: SerializablePost })
   end
 end
